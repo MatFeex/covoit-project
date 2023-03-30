@@ -22,6 +22,8 @@ class Course(models.Model):
     creation_date = models.DateField()
 
 
+
+
 class Passenger(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)

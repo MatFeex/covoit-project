@@ -2,8 +2,9 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
 from .serializers import UserSerializer, RegisterSerializer
-from django.contrib.auth import login, logout
-from rest_framework import permissions
+from django.contrib.auth import login
+from rest_framework.permissions import AllowAny
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
   

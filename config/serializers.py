@@ -5,7 +5,6 @@ from django.contrib.auth.hashers import make_password
 
 # SERIALIZERS : Serializers allow complex data such as querysets and model instances to be converted to native Python datatypes
 
-
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,8 +18,9 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id','first_name','last_name', 'email', 'password')
-        extra_kwargs = extra_kwargs = {
+        extra_kwargs = {
             'password': {
+                'required':True,
                 'write_only': True,
                 'style': {'input_type': 'password'}
             },
@@ -30,6 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                 ]
             }
         }
+
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password']) # hash the password before saving user in database
