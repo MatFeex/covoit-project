@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'covoiturage.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
+""" DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'db',
@@ -96,6 +96,12 @@ DATABASES = {
         'PASSWORD': 'pass',
         'HOST': '2001:861:3881:7650:2249:dd8d:fcbf:5ed8',
         'PORT': '5432',
+    }
+} """
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
