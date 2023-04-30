@@ -7,6 +7,15 @@ from rest_framework.permissions import AllowAny
 from rest_framework.generics import CreateAPIView, UpdateAPIView
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
+
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import render
+from config.models import User
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+from config.forms import PrivateUserForm
+
   
 
 
@@ -36,6 +45,31 @@ class LoginAPI(KnoxLoginView):
         user = serializer.validated_data['user']
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
+    
+    
+def privateUserUpdate(request, id):
+    privateUser = User.objects.get(id=id)
+
+    if request.method == 'POST':
+        form = PrivateUserForm(request.POST, instance=privateUser)
+        if form.is_valid():
+            form.save()
+            return redirect('privateUser-details', privateUser.id)
+    else:
+        form = PrivateUserForm(instance=privateUser)
+
+    return render(request,
+                'config/privateUser_update.html',
+                {'form': form})
+
+
+def privateUserDetails(request, id):
+  privateUser = User.objects.get(id=id)
+  return render(request,
+          'config/privateUser_details.html',
+          {'privateUser': privateUser})
+
+
  
 """ 
 For Logout ==> provide :
