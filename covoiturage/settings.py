@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*'] # restrict allowed hosts for production to our domain - all host allowed for dev
 
+CORS_ALLOW_ALL_ORIGINS = True # allow the api to be accessible from all origins
+
 AUTH_USER_MODEL = 'config.User'
 
 REST_FRAMEWORK = {
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
     # Custom apps
     'config.apps.ConfigConfig',
     'rest_framework',
+    'corsheaders',
     'knox',
 ]
 
@@ -62,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'covoiturage.urls'

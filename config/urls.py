@@ -1,5 +1,4 @@
 from knox import views as knox_views
-from .views import LoginAPI, RegisterAPI
 from django.urls import path
 
 from django.contrib import admin
@@ -7,9 +6,25 @@ from django.urls import path
 from config import views
 
 urlpatterns = [
-    path('api/register/', RegisterAPI.as_view(), name='register'),
-    path('api/login/', LoginAPI.as_view(), name='login'),
+    # Authentication
+    path('api/register/', views.createUser, name='register'),
+    path('api/login/', views.loginUser, name='login'),
     path('api/logout/', knox_views.LogoutView.as_view(), name='logout'),
-    path('config/<int:id>/update/',views.privateUserUpdate, name='privateUser-update' ),
-    path('config/<int:id>/',views.privateUserDetails, name='privateUser-details'),
+
+    # Users
+    path('api/users/', views.getUsers),
+    path('api/users/<int:id>/', views.getUser),
+    path('api/users/update/<int:id>/', views.updateUser),
+
+    # Courses
+    path('api/courses/', views.getCourses),
+    path('api/courses/<int:id>/', views.getCourse),
+
+    # Passengers
+    path('api/passengers/', views.getPassengers),
+    path('api/passengers/<int:id>/', views.getPassenger),
+
+    # Notes
+    path('api/notes/', views.getNotes),
+    path('api/notes/<int:id>/', views.getNote),
 ]

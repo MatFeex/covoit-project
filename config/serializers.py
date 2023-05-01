@@ -1,19 +1,26 @@
+from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from .models import User
-from django.contrib.auth.hashers import make_password
+from .models import User, Course, Passenger, Note
 
 # SERIALIZERS : Serializers allow complex data such as querysets and model instances to be converted to native Python datatypes
 
+# ===> Turn Python objects into Json data
+
+
 # User Serializer
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ('id','first_name', 'last_name', 'email','date_joined')
 
+class UserUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email','password')
 
 # Register Serializer
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(ModelSerializer):
     
     class Meta:
         model = User
@@ -32,14 +39,20 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
 
 
-    def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data['password']) # hash the password before saving user in database
-        user = User.objects.create(**validated_data)
-        return user
+# OTHERS SERIALIZERS
 
-    def update(self, instance, validated_data):
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.email = validated_data.get('email', instance.email)
-        instance.save()
-        return instance
+class CourseSerializer(ModelSerializer):
+    class Meta :
+        model = Course
+        fields = '__all__'
+
+class PassengerSerializer(ModelSerializer):
+    class Meta :
+        model = Passenger
+        fields = '__all__'
+
+class NoteSerializer(ModelSerializer):
+    class Meta :
+        model = Note
+        fields = '__all__'
+

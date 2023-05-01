@@ -13,19 +13,39 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+class Note(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    note = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.note}"
+
 
 class Course(models.Model):
+    choices = [
+        ('En attente de passagers','En attente de passagers'),
+        ('Validée', 'Validée'),
+        ('Annulée', 'Annulée')
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     start = models.CharField(max_length=255)
     end = models.CharField(max_length=255)
-    date = models.DateField()
-    creation_date = models.DateField()
+    date = models.DateTimeField()
+    creation_date = models.DateTimeField()
+    status = models.CharField(max_length=50, choices=choices, default='En attente de passagers')
 
-
+    def __str__(self):
+        return f"Course vers EPF avec {self.user.first_name} {self.user.last_name} le {self.date}"
 
 
 class Passenger(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    status = models.IntegerField()
-    note = models.IntegerField()
+
+    def __str__(self):
+        return f"Passager {self.user.first_name} {self.user.last_name} de la course #{self.course.id}"
+
