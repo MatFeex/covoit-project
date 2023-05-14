@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from knox.models import AuthToken
-from .serializers import UserSerializer, RegisterSerializer
+from .serializers import UserSerializer
 from django.contrib.auth import login
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
@@ -9,9 +9,12 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 
 from rest_framework.decorators import api_view
-from .models import User,Course,Note,Passenger
+from .models import User,Course,Note,Passenger,Evaluation
 from django.contrib.auth.hashers import make_password
 from rest_framework.exceptions import ValidationError
+
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 
 
 from rest_framework.status import (
@@ -138,7 +141,6 @@ class CoursesAPI(APIView):
         serializer = CourseSerializer(course, many=True)
         return Response(serializer.data)
     
-
 class CourseAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -164,4 +166,28 @@ class CourseAPI(APIView):
         serializer.is_valid(raise_exception=True)
         course = serializer.save()
         return Response(data={"course": CourseSerializer(course, many=False).data}, status=HTTP_200_OK)
+    
 
+
+class NotePassengerAPI(APIView):
+
+    def post(self, request, course_id, passenger_id):
+        course = get_object_or_404(Course, id=course_id)
+        passenger = get_object_or_404(Passenger, id=passenger_id, course=course)
+
+        if passenger.user != request.user:
+            return Response({"error": "You are not authorized to rate this passenger."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = NoteSerializer(data=request.data)
+        if serializer.is_valid():
+            note = serializer.save(user=request.user)
+            passenger.note = note
+            passenger.save()
+
+            rating = request.data.get('rating')
+            comment = request.data.get('comment')
+            evaluation = Evaluation(rater=request.user, ratee=passenger.user, rating=rating, comment=comment)
+            evaluation.save()
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from .models import User, Course, Passenger, Note
+from .models import User, Course, Passenger, Note,Evaluation
 from rest_framework.serializers import SerializerMethodField, CharField
 
 # SERIALIZERS : Serializers allow complex data such as querysets and model instances to be converted to native Python datatypes
@@ -56,6 +56,6 @@ class PassengerSerializer(ModelSerializer):
 
 class NoteSerializer(ModelSerializer):
     class Meta :
-        model = Note
+        model = Evaluation
         fields = '__all__'
 

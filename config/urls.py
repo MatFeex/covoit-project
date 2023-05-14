@@ -16,4 +16,7 @@ urlpatterns = [
     # Courses
     path('api/courses/', views.CoursesAPI.as_view()),
     path('api/courses/<int:id>/', views.CourseAPI.as_view()),
+
+    # Notes
+    path('api/courses/<int:course_id>/passengers/<int:passenger_id>/note/', views.NotePassengerAPI.as_view()),
 ]
