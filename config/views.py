@@ -4,11 +4,40 @@ from .serializers import UserSerializer, RegisterSerializer
 from django.contrib.auth import login
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views import APIView
 
 from rest_framework.decorators import api_view
 from .models import User,Course,Note,Passenger
-from .serializers import CourseSerializer, NoteSerializer, PassengerSerializer, UserUpdateSerializer
 from django.contrib.auth.hashers import make_password
+from rest_framework.exceptions import ValidationError
+
+
+from rest_framework.status import (
+    HTTP_401_UNAUTHORIZED,
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_201_CREATED,
+    HTTP_403_FORBIDDEN,
+    HTTP_200_OK,
+)
+
+from .serializers import (
+    UserSerializer,
+    UserCreateSerializer,
+    UserUpdateSerializer,
+    UserPasswordSerializer,
+
+    CourseSerializer, 
+    CourseManageSerializer,
+
+
+    NoteSerializer, 
+    PassengerSerializer, 
+    UserUpdateSerializer
+    )
+
 
 
 @api_view(['GET', 'POST'])
@@ -23,30 +52,59 @@ def getRoutes(request):
 
 # USERS
 
-@api_view(['GET'])
-def getUsers(request):
-    users = User.objects.all()
-    serializer = UserSerializer(users, many = True) # many = True because multiple objects
-    return Response(serializer.data)
+class UsersAPI(APIView):
+    
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
 
-@api_view(['GET'])
-def getUser(request, id):
-    user = User.objects.get(id=id)
-    serializer = UserSerializer(user, many = False)
-    return Response(serializer.data)
+class UserAPI(APIView):
+    
+    def get_permissions(self):
+        if self.request.method == 'POST': return [AllowAny()]
+        elif self.request.method in ['GET','PUT','PATCH']: return [IsAuthenticated()]
+        return super().get_permissions()
 
+    def post(self, request):
+        serializer = UserCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
+        user = serializer.save()
+        return Response(data={"user": UserSerializer(user, many=False).data, "token": AuthToken.objects.create(user)[1]}, status=HTTP_201_CREATED)
 
-@api_view(['POST'])
-def createUser(request):
-    serializer = RegisterSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True) # check if valid & raise exception otherwise
-    serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
-    user = serializer.save() # save user if valid
-    return Response({
-        "user": UserSerializer(user, many = False).data,
-        "token": AuthToken.objects.create(user)[1]
-    })
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data)
+
+    def put(self, request):
+        user = request.user
+        serializer = UserUpdateSerializer(instance=user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        actual_password = serializer.validated_data['password']
+        if actual_password:
+            if user.check_password(actual_password):
+                serializer.validated_data['password'] = make_password(actual_password)
+                user = serializer.save()
+            else: return Response(status=HTTP_401_UNAUTHORIZED)
+        return Response(data={"user": UserSerializer(user, many=False).data}, status=HTTP_200_OK)
+    
+    def patch(self, request):
+        user = request.user
+        serializer = UserPasswordSerializer(instance=user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        actual_password = serializer.validated_data['password']
+        new_password = serializer.validated_data['new_password']
+        if actual_password and new_password:
+            if user.check_password(actual_password):
+                serializer.validated_data['password'] = make_password(new_password)
+                user = serializer.save()
+            else: return Response(status=HTTP_401_UNAUTHORIZED)
+        return Response(data={"user": UserSerializer(user, many=False).data}, status=HTTP_200_OK)
+    
+
 
 @api_view(['POST'])
 def loginUser(request):
@@ -57,73 +115,53 @@ def loginUser(request):
     login(request, user)
     return KnoxLoginView().post(request, format=None)
 
+
 # logoutUser : provide in hearders a POST request : 
 # {
 #     "Authorization" : "Token <token>"
 # } 
 
 
-@api_view(['POST'])
-def updateUser(request, id):
-
-    try: user = User.objects.get(id=id)
-    except User.DoesNotExist: return Response({"status": f"No user for id = {id}"})
-
-    serializer = UserUpdateSerializer(instance=user, data=request.data)
-
-    if serializer.is_valid():
-        actual_password = serializer.validated_data['password']        
-        if actual_password:
-            if user.check_password(actual_password):
-                serializer.validated_data['password'] = make_password(actual_password)
-                user = serializer.save()
-            else: return Response({"status": "Invalid actual password provided"})        
-        return Response({"status": "User successfully updated", "user": UserSerializer(user, many=False).data})
-    else: return Response({"status": "Invalid data provided"})
-
 
 # COURSES 
 
-@api_view(['GET'])
-def getCourses(request):
-    courses = Course.objects.all()
-    serializer = CourseSerializer(courses, many = True)
-    return Response(serializer.data)
 
+class CoursesAPI(APIView):
+    permission_classes = [IsAuthenticated]
 
-@api_view(['GET'])
-def getCourse(request, id):
-    course = Course.objects.get(id=id)
-    serializer = CourseSerializer(course, many = False)
-    return Response(serializer.data)
+    def get_obj(self, request):
+        try: return Course.objects.filter(user=request.user)
+        except Course.DoesNotExist: raise ValidationError("No courses founded for this user")
 
+    def get(self, request):
+        course = self.get_obj(request)
+        serializer = CourseSerializer(course, many=True)
+        return Response(serializer.data)
+    
 
-# PASSENGERS 
+class CourseAPI(APIView):
+    permission_classes = [IsAuthenticated]
 
-@api_view(['GET'])
-def getPassengers(request):
-    passengers = Passenger.objects.all()
-    serializer = PassengerSerializer(passengers, many = True)
-    return Response(serializer.data)
+    def get_obj(self, request, id):
+        try: return Course.objects.get(id=id, user = request.user)
+        except Course.DoesNotExist: raise ValidationError("No course for this id")
 
+    def get(self, request,id):
+        course = self.get_obj(request, id)
+        serializer = CourseSerializer(course, many=False)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = CourseManageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data['user'] = request.user
+        course = serializer.save()
+        return Response(data={"course": CourseSerializer(course, many=False).data}, status=HTTP_201_CREATED)
 
-@api_view(['GET'])
-def getPassenger(request, id):
-    passenger = Passenger.objects.get(id=id)
-    serializer = PassengerSerializer(passenger, many = False)
-    return Response(serializer.data)
+    def put(self, request, id):
+        course = self.get_obj(request, id)
+        serializer = CourseManageSerializer(instance=course, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        course = serializer.save()
+        return Response(data={"course": CourseSerializer(course, many=False).data}, status=HTTP_200_OK)
 
-# NOTES 
-
-@api_view(['GET'])
-def getNotes(request):
-    notes = Note.objects.all()
-    serializer = NoteSerializer(notes, many = True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def getNote(request, id):
-    note = Note.objects.get(id=id)
-    serializer = NoteSerializer(note, many = False)
-    return Response(serializer.data)

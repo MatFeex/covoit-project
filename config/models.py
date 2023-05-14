@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 # User Model Customization
 
@@ -19,10 +20,10 @@ class User(AbstractUser):
 
 class Note(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    note = models.IntegerField()
+    note = models.IntegerField(default=5)
 
     def __str__(self):
-        return f"{self.note}"
+        return f"Note :{self.note}/5"
 
 
 class Course(models.Model):
@@ -34,8 +35,8 @@ class Course(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     start = models.CharField(max_length=255)
     end = models.CharField(max_length=255)
-    date = models.DateTimeField()
-    creation_date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now())
+    creation_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, choices=choices, default='En attente de passagers')
 
     def __str__(self):
