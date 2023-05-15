@@ -50,12 +50,20 @@ def getRoutes(request):
         'GET /api/users/',
         'POST /api/user/login',
         'POST/api/user/logout',
-        'POST /api/user/register',
         'GET POST PUT PATCH /api/user/',
 
         'GET /api/courses/',
         'GET api/courses-user/',
         'GET POST PUT DELETE /api/courses/id',
+
+        'GET api/passengers/',
+        'GET POST api/passengers-user/',
+        'GET PUT DELETE api/passengers/<int:id>/',
+
+        'GET api/notes/',
+        'POST api/notes/<int:id>/',
+        'GET PUT DELETE api/notes/courses/<int:course_id>/user-rated/<int:rated_id>/'
+
         ]
     return Response(routes)
 
