@@ -36,7 +36,7 @@ from .serializers import (
     CourseManageSerializer,
 
     PassengerSerializer,
-    PassengerCreateSerializer,
+    PassengerManageSerializer,
 
     NoteSerializer, 
     NoteManageSerializer,
@@ -212,11 +212,11 @@ class PassengersUserAPI(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        serializer = PassengerCreateSerializer(data=request.data)
+        serializer = PassengerManageSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['user'] = request.user
-        Passenger = serializer.save()
-        return Response(data={"passenger": PassengerSerializer(Passenger, many=False).data}, status=HTTP_201_CREATED)
+        passenger = serializer.save()
+        return Response(data={"passenger": PassengerSerializer(passenger, many=False).data}, status=HTTP_201_CREATED)
 
 
 class PassengerAPI(APIView):
@@ -230,6 +230,13 @@ class PassengerAPI(APIView):
         passenger = self.get_obj(request, id)
         serializer = PassengerSerializer(passenger, many=False)
         return Response(serializer.data)
+    
+    def put(self, request, id):
+        passenger = self.get_obj(request, id)
+        serializer = PassengerManageSerializer(instance=passenger, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        passenger = serializer.save()
+        return Response(data={"passenger": PassengerSerializer(passenger, many=False).data}, status=HTTP_200_OK)
     
     def delete(self, request, id):
          passenger = self.get_obj(request, id)

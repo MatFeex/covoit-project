@@ -25,14 +25,14 @@ The project will be accessible at [localhost:8000/api/routes/](http://localhost:
 - GET /api/courses/
 - GET POST PUT DELETE /api/courses/id
 
---
+---
 
 FOR AUTHENTICATION: Provide the following in the request header
 
 - Key: Authorization
 - Value: Token <token>
 
---
+---
 
 ## USERS
 
@@ -62,7 +62,7 @@ FOR AUTHENTICATION: Provide the following in the request header
 
 ### USER REGISTER
 
-- URL: POST http://localhost:8000/api/users/
+- URL: POST http://localhost:8000/api/user/
 - Request body:  
 {
 "first_name": "John",
@@ -75,22 +75,33 @@ AUTHENTICATION NEEDED for GET & PUT
 --
 
 ### UPDATE USER
-
-- URL: PUT http://localhost:8000/api/users/
+- AUTHENTICATION NEEDED
+- URL: PUT http://localhost:8000/api/user/
 - Request body (update a user but not the password):  
 
 {
 "first_name": "John 2",
 "last_name": "Doe 2",
 "email": "john.doe2@email.fr"
+"password":"admin123"
 }  
-AUTHENTICATION NEEDED
+
+### UPDATE USER PASSWORD
+- AUTHENTICATION NEEDED
+- URL: PATCH http://localhost:8000/api/user/
+- Request body (update the password):  
+
+{
+"email": "john.doe2@email.fr",
+"password":"admin123",
+"new_password":"admin1234"
+}  
 
 --
 
 ### GET AUTHENTICATED USER
 
-- URL: GET http://localhost:8000/api/users/
+- URL: GET http://localhost:8000/api/user/
 - AUTHENTICATION NEEDED
 
 --
@@ -148,3 +159,30 @@ AUTHENTICATION NEEDED
 
 - URL: DELETE http://localhost:8000/api/courses/id
 - Empty body  
+
+### ALL PASSENGERS
+
+- URL: GET http://localhost:8000/api/passengers/
+
+
+#### PASSENGERS FROM authenticated user
+- AUTHENTICATION NEEDED for GET, POST
+
+- URL: GET http://localhost:8000/api/passengers-user/
+
+- URL : POST : become passenger of a course (ex : course id 1)
+
+    {
+        "course": 1
+    }
+
+#### PASSENGER FROM id
+- AUTHENTICATION NEEDED
+
+- URL: GET, PUT, DELETE http://localhost:8000/api/passengers/id/
+
+- PUT :
+
+    {
+        "course": 1
+    }

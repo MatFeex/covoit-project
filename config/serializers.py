@@ -55,7 +55,7 @@ class PassengerSerializer(ModelSerializer):
         model = Passenger
         fields = '__all__'
 
-class PassengerCreateSerializer(ModelSerializer):
+class PassengerManageSerializer(ModelSerializer):
     class Meta :
         model = Passenger
         fields = '__all__'
