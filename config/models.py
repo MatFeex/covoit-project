@@ -35,16 +35,6 @@ class Course(models.Model):
         return f"Course vers EPF avec {self.user.first_name} {self.user.last_name} le {self.date}"
     
 
-class Note(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rated_course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='ratings_given')
-    note = models.IntegerField(default=5)
-
-    def __str__(self):
-        return f"Note :{self.note}/5 pour la course #{self.rated_course.id} donnée par {self.user.first_name} {self.user.last_name}"
-
-
-
 class Passenger(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -53,7 +43,8 @@ class Passenger(models.Model):
         return f"Passager {self.user.first_name} {self.user.last_name} de la course #{self.course.id}"
     
 
-class Evaluation(models.Model):
+
+class Note(models.Model):
     RATING_CHOICES = (
         (1, '1 étoile'),
         (2, '2 étoiles'),
@@ -62,10 +53,11 @@ class Evaluation(models.Model):
         (5, '5 étoiles'),
     )
     # related_name pour accéder via User aux rater/rated
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     rater = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rater_evaluations')
     rated = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rated_evaluations')
-    rating = models.IntegerField(choices=RATING_CHOICES)
+    note = models.IntegerField(choices=RATING_CHOICES, default=RATING_CHOICES[4][0])
     comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.rater} a évalué {self.rated} {self.rating} étoiles et a laissé le commentaire suivant : {self.comment}"
+        return f"{self.rater} a évalué {self.rated} : {self.note} étoiles et a laissé le commentaire suivant : {self.comment}"

@@ -7,14 +7,14 @@ from knox.views import LoginView as KnoxLoginView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
+from django.db.models import Q
 
 from rest_framework.decorators import api_view
-from .models import User,Course,Note,Passenger,Evaluation
+from .models import User,Course,Note,Passenger
 from django.contrib.auth.hashers import make_password
 from rest_framework.exceptions import ValidationError
 
 from django.shortcuts import get_object_or_404
-from rest_framework import status
 
 
 from rest_framework.status import (
@@ -35,10 +35,11 @@ from .serializers import (
     CourseSerializer, 
     CourseManageSerializer,
 
+    PassengerSerializer,
+    PassengerCreateSerializer,
 
     NoteSerializer, 
-    PassengerSerializer, 
-    UserUpdateSerializer
+    NoteManageSerializer,
     )
 
 
@@ -169,7 +170,7 @@ class CourseAPI(APIView):
 
     def get_obj(self, request, id):
         try: return Course.objects.get(id=id, user = request.user)
-        except Course.DoesNotExist: raise ValidationError("No course for this id")
+        except Course.DoesNotExist: raise ValidationError("Authenticated user has no course for this id")
 
     def get(self, request,id):
         course = self.get_obj(request, id)
@@ -188,26 +189,123 @@ class CourseAPI(APIView):
          course.delete()
     
 
+# PASSENGERS 
 
-class NotePassengerAPI(APIView):
+class PassengersAPI(APIView):
 
-    def post(self, request, course_id, passenger_id):
-        course = get_object_or_404(Course, id=course_id)
-        passenger = get_object_or_404(Passenger, id=passenger_id, course=course)
+    def get(self, request):
+        passengers = Passenger.objects.all()
+        serializer = PassengerSerializer(passengers, many=True)
+        return Response(serializer.data)
+    
 
-        if passenger.user != request.user:
-            return Response({"error": "You are not authorized to rate this passenger."}, status=status.HTTP_401_UNAUTHORIZED)
+class PassengersUserAPI(APIView):
+    permission_classes = [IsAuthenticated]
 
-        serializer = NoteSerializer(data=request.data)
-        if serializer.is_valid():
-            note = serializer.save(user=request.user)
-            passenger.note = note
-            passenger.save()
+    def get_obj(self, request):
+        try: return Passenger.objects.filter(user=request.user)
+        except Passenger.DoesNotExist: raise ValidationError("This user has never been a passenger.")
 
-            rating = request.data.get('rating')
-            comment = request.data.get('comment')
-            evaluation = Evaluation(rater=request.user, ratee=passenger.user, rating=rating, comment=comment)
-            evaluation.save()
+    def get(self, request):
+        passengers = self.get_obj(request)
+        serializer = PassengerSerializer(passengers, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = PassengerCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data['user'] = request.user
+        Passenger = serializer.save()
+        return Response(data={"passenger": PassengerSerializer(Passenger, many=False).data}, status=HTTP_201_CREATED)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PassengerAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_obj(self, request, id):
+        try: return Passenger.objects.get(id=id, user = request.user)
+        except Passenger.DoesNotExist: raise ValidationError("Passenger id not found OR not associated with athenticated user")
+
+    def get(self, request,id):
+        passenger = self.get_obj(request, id)
+        serializer = PassengerSerializer(passenger, many=False)
+        return Response(serializer.data)
+    
+    def delete(self, request, id):
+         passenger = self.get_obj(request, id)
+         passenger.delete()
+
+
+# NOTES
+
+class NotesAPI(APIView):
+
+    def get(self, request):
+        notes = Note.objects.all()
+        serializer = NoteSerializer(notes, many=True)
+        return Response(serializer.data)
+
+
+class NotesSomeoneAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_course_and_rated_user(self, request, course_id, rated_id):
+        try:
+            course = Course.objects.get(id=course_id)
+
+            if request.user == course.user: raise ValidationError("You cannot rate your own course")
+
+            passenger = Passenger.objects.filter(user=request.user, course=course).first()
+
+            if not passenger:
+                if rated_id == request.user.id: raise ValidationError("You cannot rate yourself")
+                else: raise ValidationError("You did not attend this course: rating denied")
+
+            if course.user.id == rated_id:  return course, course.user
+
+            else :
+                try:
+                    rated_user = Passenger.objects.exclude(user=request.user).get(id=rated_id, course=course).user
+                    return course, rated_user
+
+                except Passenger.DoesNotExist: raise ValidationError("No passenger found for the provided ID")
+
+        except Course.DoesNotExist:
+            raise ValidationError("Course does not exist")
+        
+
+    def post(self, request, course_id, rated_id):
+        course, rated = self.get_course_and_rated_user(request, course_id, rated_id)
+        if not Note.objects.filter(rater=request.user, rated = rated, course = course).exists():
+            serializer = NoteManageSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.validated_data['course'] = course
+            serializer.validated_data['rater'] = request.user
+            serializer.validated_data['rated'] = rated
+            note = serializer.save()
+            return Response(data={"note": NoteSerializer(note, many=False).data}, status=HTTP_201_CREATED)
+        else : raise ValidationError("You can only rate this person once")
+
+
+class NoteAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_obj(self, request, id):
+        try: return Note.objects.get(id=id, rater = request.user)
+        except Note.DoesNotExist: raise ValidationError("Authenticated user has no note for this ID")
+
+    def get(self, request,id):
+        note = self.get_obj(request, id)
+        serializer = NoteSerializer(note, many=False)
+        return Response(serializer.data)
+    
+    def put(self, request, id):
+        note = self.get_obj(request, id)
+        serializer = NoteManageSerializer(instance=note, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        note = serializer.save()
+        return Response(data={"Note": NoteSerializer(note, many=False).data}, status=HTTP_200_OK)
+    
+    def delete(self, request, id):
+         Note = self.get_obj(request, id)
+         Note.delete()

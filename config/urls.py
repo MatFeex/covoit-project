@@ -22,6 +22,13 @@ urlpatterns = [
     path('api/courses-user/', views.CoursesUserAPI.as_view()),
     path('api/courses/<int:id>/', views.CourseAPI.as_view()),
 
+    # Passenger
+    path('api/passengers/', views.PassengersAPI.as_view()),
+    path('api/passengers-user/', views.PassengersUserAPI.as_view()),
+    path('api/passngers/<int:id>/', views.PassengerAPI.as_view()),
+
     # Notes
-    path('api/courses/<int:course_id>/passengers/<int:passenger_id>/note/', views.NotePassengerAPI.as_view()),
+    path('api/notes/', views.NotesAPI.as_view()),
+    path('api/notes/<int:id>/', views.NoteAPI.as_view()),
+    path('api/notes/courses/<int:course_id>/user-rated/<int:rated_id>/', views.NotesSomeoneAPI.as_view()),
 ]
