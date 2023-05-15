@@ -27,7 +27,7 @@ class Course(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     start = models.CharField(max_length=255)
     end = models.CharField(max_length=255)
-    date = models.DateTimeField(default=timezone.now())
+    date = models.DateTimeField(default=timezone.now)
     creation_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, choices=choices, default='En attente de passagers')
 
@@ -61,11 +61,11 @@ class Evaluation(models.Model):
         (4, '4 étoiles'),
         (5, '5 étoiles'),
     )
-    # related_name pour accéder via User aux rater/ratee
+    # related_name pour accéder via User aux rater/rated
     rater = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rater_evaluations')
-    ratee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratee_evaluations')
+    rated = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rated_evaluations')
     rating = models.IntegerField(choices=RATING_CHOICES)
-    comment = models.TextField(blank=True)
+    comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.rater} a évalué {self.ratee} {self.rating} étoiles et a laissé le commentaire suivant : {self.comment}"
+        return f"{self.rater} a évalué {self.rated} {self.rating} étoiles et a laissé le commentaire suivant : {self.comment}"

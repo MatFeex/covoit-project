@@ -43,12 +43,18 @@ from .serializers import (
 
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def getRoutes(request):
     routes = [
-        'GET /api/login',
-        'GET/api/logout'
-        'GET /api/register',
+        'GET /api/users/',
+        'POST /api/user/login',
+        'POST/api/user/logout',
+        'POST /api/user/register',
+        'GET POST PUT PATCH /api/user/',
+
+        'GET /api/courses/',
+        'GET api/courses-user/',
+        'GET POST PUT DELETE /api/courses/id',
         ]
     return Response(routes)
 
@@ -128,8 +134,16 @@ def loginUser(request):
 
 # COURSES 
 
-
 class CoursesAPI(APIView):
+
+    def get(self, request):
+        courses = Course.objects.all()
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+    
+
+
+class CoursesUserAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_obj(self, request):
@@ -141,6 +155,15 @@ class CoursesAPI(APIView):
         serializer = CourseSerializer(course, many=True)
         return Response(serializer.data)
     
+    def post(self, request):
+        serializer = CourseManageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data['user'] = request.user
+        course = serializer.save()
+        return Response(data={"course": CourseSerializer(course, many=False).data}, status=HTTP_201_CREATED)
+
+    
+
 class CourseAPI(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -153,19 +176,16 @@ class CourseAPI(APIView):
         serializer = CourseSerializer(course, many=False)
         return Response(serializer.data)
     
-    def post(self, request):
-        serializer = CourseManageSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.validated_data['user'] = request.user
-        course = serializer.save()
-        return Response(data={"course": CourseSerializer(course, many=False).data}, status=HTTP_201_CREATED)
-
     def put(self, request, id):
         course = self.get_obj(request, id)
         serializer = CourseManageSerializer(instance=course, data=request.data)
         serializer.is_valid(raise_exception=True)
         course = serializer.save()
         return Response(data={"course": CourseSerializer(course, many=False).data}, status=HTTP_200_OK)
+    
+    def delete(self, request, id):
+         course = self.get_obj(request, id)
+         course.delete()
     
 
 
