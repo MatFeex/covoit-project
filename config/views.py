@@ -47,6 +47,7 @@ from .serializers import (
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
+
         'GET /api/users/',
         'POST /api/user/login',
         'POST/api/user/logout',
@@ -260,46 +261,47 @@ class NotesAPI(APIView):
         serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data)
 
-
 class NotesSomeoneAPI(APIView):
+
     permission_classes = [IsAuthenticated]
 
-    def get_course_and_rated_user(self, request, course_id, rated_id):
-        try:
-            course = Course.objects.get(id=course_id)
-
-            if request.user == course.user: raise ValidationError("You cannot rate your own course")
-
-            passenger = Passenger.objects.filter(user=request.user, course=course).first()
-
-            if not passenger:
-                if rated_id == request.user.id: raise ValidationError("You cannot rate yourself")
-                else: raise ValidationError("You did not attend this course: rating denied")
-
-            if course.user.id == rated_id:  return course, course.user
-
-            else :
-                try:
-                    rated_user = Passenger.objects.exclude(user=request.user).get(id=rated_id, course=course).user
-                    return course, rated_user
-
-                except Passenger.DoesNotExist: raise ValidationError("No passenger found for the provided ID")
-
-        except Course.DoesNotExist:
-            raise ValidationError("Course does not exist")
-        
+    def get(self, request, course_id, rated_id):
+        # Retrieve all notes for the given course and rated user
+        notes = Note.objects.filter(course_id=course_id, rated_id=rated_id)
+        serializer = NoteManageSerializer(notes, many=True)
+        return Response(serializer.data)
 
     def post(self, request, course_id, rated_id):
-        course, rated = self.get_course_and_rated_user(request, course_id, rated_id)
-        if not Note.objects.filter(rater=request.user, rated = rated, course = course).exists():
-            serializer = NoteManageSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.validated_data['course'] = course
-            serializer.validated_data['rater'] = request.user
-            serializer.validated_data['rated'] = rated
-            note = serializer.save()
-            return Response(data={"note": NoteSerializer(note, many=False).data}, status=HTTP_201_CREATED)
-        else : raise ValidationError("You can only rate this person once")
+        serializer = NoteManageSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Ensure the rater is the current authenticated user
+        rater = request.user
+
+        # Check if the rater is not the rated
+        if rater.id == rated_id :  return Response("Rating denied : You cannot rate yourself.", status=HTTP_400_BAD_REQUEST)
+
+        course = Course.objects.get(id=course_id)
+
+        if course.user_id == rater.id : # the rater is the driver
+            
+            if not rated_id in rater.passenger_set.filter(course_id=course_id).values_list('user_id', flat=True): # 
+                return Response("Rating denied : the rated person did not attend to your course.", status=HTTP_400_BAD_REQUEST)
+        
+        elif rater.id in course.passenger_set.filter(course_id=course_id).values_list('user_id', flat=True) : # the rater is a passenger
+            if not rated_id == course.user_id :
+                return Response("Rating denied : As a passenger, you can only rate your driver.", status=HTTP_400_BAD_REQUEST)
+        else : return Response("Rating denied : You cannot rate a course in which you did not attend.", status=HTTP_400_BAD_REQUEST)
+
+
+        # Set the course and rated user IDs in the serializer data
+        serializer.validated_data['course_id'] = course_id
+        serializer.validated_data['rated_id'] = rated_id
+        serializer.validated_data['rater'] = rater
+
+        # Create the note
+        serializer.save()
+        return Response(serializer.data, status=HTTP_201_CREATED)
 
 
 class NoteAPI(APIView):
