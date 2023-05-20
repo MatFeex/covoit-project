@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import User, Course, Passenger, Note
-from rest_framework.serializers import SerializerMethodField, CharField
+from rest_framework.serializers import SerializerMethodField, CharField, ValidationError
 
 # SERIALIZERS : Serializers allow complex data such as querysets and model instances to be converted to native Python datatypes
 
@@ -46,7 +46,7 @@ class CourseSerializer(ModelSerializer):
 class CourseManageSerializer(ModelSerializer):
     class Meta :
         model = Course
-        fields = ('start','end','date','status')
+        fields = ('start','end','date','status','vehicle_brand','vehicle_model','vehicle_seats')
 
 # PASSENGERS
 
@@ -56,9 +56,24 @@ class PassengerSerializer(ModelSerializer):
         fields = '__all__'
 
 class PassengerManageSerializer(ModelSerializer):
+    
     class Meta :
         model = Passenger
-        fields = '__all__'
+        fields = ('course',)
+
+    def validate(self, data):
+        user = self.context['request'].user
+        course = data['course']
+
+        # Unique passenger validation
+        if Passenger.objects.filter(user=user, course=course).exists():
+            raise ValidationError("You cannot join a course twice.")
+
+        # A passenger cannot be the driver
+        if Course.objects.filter(id=course.id, user=user).exists():
+            raise ValidationError("You cannot join your own course.")
+
+        return data
 
 
 

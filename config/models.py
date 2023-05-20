@@ -28,6 +28,9 @@ class Course(models.Model):
     start = models.CharField(max_length=255)
     end = models.CharField(max_length=255)
     date = models.DateTimeField(default=timezone.now)
+    vehicle_brand = models.CharField(max_length=100, default='NA')
+    vehicle_model = models.CharField(max_length=100, default='NA')
+    vehicle_seats = models.IntegerField(default=4)
     creation_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, choices=choices, default='En attente de passagers')
 

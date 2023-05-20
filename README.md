@@ -128,6 +128,9 @@ AUTHENTICATION NEEDED for GET & PUT
 {
 "start": "Monoprix Bourg La Reine",
 "end": "EPF Cachan",
+"vehicle_brand":"Porsche",
+"vehicle_model":"Cayenne",
+"vehicle_seats":4,
 "date": "2023-05-15T23:18:32.530856Z",
 "status": "En attente de passagers"
 }  

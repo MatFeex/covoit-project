@@ -194,8 +194,10 @@ class CourseAPI(APIView):
         return Response(data={"course": CourseSerializer(course, many=False).data}, status=HTTP_200_OK)
     
     def delete(self, request, id):
-         course = self.get_obj(request, id)
-         course.delete()
+        course = self.get_obj(request, id)
+        course.delete()
+        return Response(data={"detail": f"The course {id} has been deleted"}, status=HTTP_200_OK)
+
     
 
 # PASSENGERS 
@@ -221,9 +223,9 @@ class PassengersUserAPI(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        serializer = PassengerManageSerializer(data=request.data)
+        serializer = PassengerManageSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data['user'] = request.user
+        serializer.validated_data['user'] = request.user        
         passenger = serializer.save()
         return Response(data={"passenger": PassengerSerializer(passenger, many=False).data}, status=HTTP_201_CREATED)
 
@@ -233,7 +235,7 @@ class PassengerAPI(APIView):
 
     def get_obj(self, request, id):
         try: return Passenger.objects.get(id=id, user = request.user)
-        except Passenger.DoesNotExist: raise ValidationError("Passenger id not found OR not associated with athenticated user")
+        except Passenger.DoesNotExist: raise ValidationError(f"Passenger not found for id {id} OR not associated with athenticated user")
 
     def get(self, request,id):
         passenger = self.get_obj(request, id)
@@ -248,8 +250,9 @@ class PassengerAPI(APIView):
         return Response(data={"passenger": PassengerSerializer(passenger, many=False).data}, status=HTTP_200_OK)
     
     def delete(self, request, id):
-         passenger = self.get_obj(request, id)
-         passenger.delete()
+        passenger = self.get_obj(request, id)
+        passenger.delete()
+        return Response(data={"detail": f"The passenger {id} has been deleted"}, status=HTTP_200_OK)
 
 
 # NOTES
@@ -324,5 +327,6 @@ class NoteAPI(APIView):
         return Response(data={"Note": NoteSerializer(note, many=False).data}, status=HTTP_200_OK)
     
     def delete(self, request, id):
-         Note = self.get_obj(request, id)
-         Note.delete()
+        note = self.get_obj(request, id)
+        note.delete()
+        return Response(data={"detail": f"The note {id} has been deleted"}, status=HTTP_200_OK)

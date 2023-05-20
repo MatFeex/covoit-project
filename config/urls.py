@@ -25,7 +25,7 @@ urlpatterns = [
     # Passenger
     path('api/passengers/', views.PassengersAPI.as_view()),
     path('api/passengers-user/', views.PassengersUserAPI.as_view()),
-    path('api/passngers/<int:id>/', views.PassengerAPI.as_view()),
+    path('api/passengers/<int:id>/', views.PassengerAPI.as_view()),
 
     # Notes
     path('api/notes/', views.NotesAPI.as_view()),
