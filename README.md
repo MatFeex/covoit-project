@@ -152,11 +152,14 @@ AUTHENTICATION NEEDED for GET & PUT
 - Request body:  
 
 {
-"start": "Monoprix Bourg La Reine",
-"end": "EPF Cachan",
-"date": "2023-05-15T23:18:32.530856Z",
-"status": "Validée"
-}
+"start": "Monoprix Bourg La Reine",  
+"end": "EPF Cachan",  
+"vehicle_brand":"Porsche",  
+"vehicle_model":"Cayenne",  
+"vehicle_seats":4,  
+"date": "2023-05-15T23:18:32.530856Z",  
+"status": "Validée"  
+}  
 
 #### DELETE COURSE
 
