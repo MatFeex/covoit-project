@@ -1,0 +1,14 @@
+@import "../../style/colors";
+
+.logoProfil {
+    height: 40px;
+    width: 40px;
+  }
+
+.white {
+    color: white;
+}
+
+.navbar {
+    background: linear-gradient(90deg, $navleft 0%, $navright 100%);
+}
