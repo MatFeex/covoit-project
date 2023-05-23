@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Projet de covoiturage EPF - Documentation des routes</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.5;
+                margin: 20px;
+                padding: 0;
+                background-color: #f5f5f5;
+            }
+    
+            h1 {
+                font-size: 28px;
+                color: #333;
+                margin-bottom: 20px;
+            }
+    
+            h2 {
+                font-size: 24px;
+                color: #333;
+                margin-bottom: 15px;
+            }
+    
+            h3 {
+                font-size: 20px;
+                color: #333;
+                margin-bottom: 10px;
+            }
+    
+            p {
+                margin-bottom: 15px;
+            }
+    
+            ul {
+                margin-bottom: 15px;
+                list-style-type: none;
+                padding-left: 0;
+            }
+    
+            li {
+                margin-bottom: 10px;
+            }
+    
+            strong {
+                font-weight: bold;
+            }
+    
+            code {
+                font-family: Consolas, monospace;
+                background-color: #f8f8f8;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+        </style>
+    </head>
+	<body>
+		<h1>Projet de covoiturage EPF - Documentation des routes</h1>
+		<p>Ceci est une application de covoiturage permettant aux membres de l'EPF de covoiturer pour relier leur trajet domicile-travail.</p>
+
+		<h2>Endpoints:</h2>
+
+		<h3>Utilisateurs</h3>
+		<ul>
+			<li><strong>GET /api/users/</strong> - Récupérer tous les utilisateurs.</li>
+			<li>
+				<strong>POST /api/user/login</strong> - Se connecter en tant qu'utilisateur.<br />
+				<em>Paramètres du corps de la requête:</em><br />
+				<code>{ "email": "john.doe@email.fr", "password": "admin123" }</code>
+			</li>
+			<li>
+				<strong>POST /api/user/logout</strong> - Se déconnecter.<br />
+				<em>Authentification requise.</em>
+			</li>
+			<li>
+				<strong>POST /api/user/register</strong> - S'inscrire en tant qu'utilisateur.<br />
+				<em>Paramètres du corps de la requête:</em><br />
+				<code>{ "first_name": "John", "last_name": "Doe", "email": "john.doe@email.fr", "password": "admin123" }</code><br />
+				<em>Authentification requise pour GET & PUT.</em>
+			</li>
+			<li>
+				<strong>GET /api/user/</strong> - Récupérer l'utilisateur authentifié.<br />
+				<em>Authentification requise.</em>
+			</li>
+			<li>
+				<strong>PUT /api/user/</strong> - Mettre à jour les informations de l'utilisateur.<br />
+				<em>Paramètres du corps de la requête (mise à jour de l'utilisateur sans changer le mot de passe):</em><br />
+				<code>{ "first_name": "John 2", "last_name": "Doe 2", "email": "john.doe2@email.fr" "password": "admin123" }</code><br />
+				<em>Authentification requise.</em>
+			</li>
+			<li>
+				<strong>PATCH /api/user/</strong> - Mettre à jour le mot de passe de l'utilisateur.<br />
+				<em>Paramètres du corps de la requête (mise à jour du mot de passe):</em><br />
+				<code>{ "email": "john.doe2@email.fr", "password": "admin123", "new_password": "admin1234" }</code><br />
+				<em>Authentification requise.</em>
+			</li>
+		</ul>
+
+		<h3>Courses</h3>
+		<ul>
+			<li><strong>GET /api/courses/</strong> - Récupérer toutes les courses.</li>
+			<li>
+				<strong>GET /api/courses-user/</strong> - Récupérer les courses de l'utilisateur authentifié.<br />
+				<em>Authentification requise pour GET & POST.</em>
+			</li>
+			<li>
+				<strong>POST /api/courses-user/</strong> - Créer une nouvelle course.<br />
+				<em>Paramètres du corps de la requête:</em><br />
+				<code>{ "start": "Monoprix Bourg La Reine", "end": "EPF Cachan", "vehicle_brand": "Porsche", "vehicle_model": "Cayenne", "vehicle_seats": 4, "date": "2023-05-15T23:18:32.530856Z", "status": "En attente de passagers" }</code>
+			</li>
+			<li>
+				<strong>GET /api/courses/id</strong> - Récupérer une course spécifique.<br />
+				<em>Authentification requise.</em>
+			</li>
+			<li>
+				<strong>PUT /api/courses/id</strong> - Mettre à jour une course spécifique.<br />
+				<em>Paramètres du corps de la requête:</em><br />
+				<code>{ "start": "Monoprix Bourg La Reine", "end": "EPF Cachan", "vehicle_brand": "Porsche", "vehicle_model": "Cayenne", "vehicle_seats": 4, "date": "2023-05-15T23:18:32.530856Z", "status": "Validée" }</code><br />
+				<em>Authentification requise.</em>
+			</li>
+			<li>
+				<strong>DELETE /api/courses/id</strong> - Supprimer une course spécifique.<br />
+				<em>Authentification requise.</em>
+			</li>
+		</ul>
+
+		<h3>Notes</h3>
+		<ul>
+			<li><strong>GET /api/notes/</strong> - Récupérer toutes les notes.</li>
+			<li>
+				<strong>POST /api/notes/id/</strong> - Ajouter une note à une course spécifique.<br />
+				<em>Paramètres du corps de la requête (ex. : id de la course 1):</em><br />
+				<code>{}</code>
+			</li>
+			<li>
+				<strong>GET /api/notes/courses/course_id/user-rated/rated_id/</strong> - Récupérer, mettre à jour ou supprimer la note donnée par un utilisateur à une course spécifique.<br />
+				<em>Authentification requise.</em>
+			</li>
+			<li>
+				<strong>PUT /api/notes/courses/course_id/user-rated/rated_id/</strong> - Mettre à jour la note donnée par un utilisateur à une course spécifique.<br />
+				<em>Paramètres du corps de la requête:</em><br />
+				<code>{}</code><br />
+				<em>Authentification requise.</em>
+			</li>
+			<li>
+				<strong>DELETE /api/notes/courses/course_id/user-rated/rated_id/</strong> - Supprimer la note donnée par un utilisateur à une course spécifique.<br />
+				<em>Authentification requise.</em>
+			</li>
+		</ul>
+
+		<p>Pour plus de détails sur les requêtes, veuillez vous référer au fichier README du projet.</p>
+	</body>
+</html>

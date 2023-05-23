@@ -7,6 +7,10 @@ from config import views
 
 urlpatterns = [
 
+    # home
+    path('', views.home),
+    path('api/', views.home),
+
     # URLs
     path('api/routes/', views.getRoutes),
 

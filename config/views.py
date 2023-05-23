@@ -14,7 +14,7 @@ from .models import User,Course,Note,Passenger
 from django.contrib.auth.hashers import make_password
 from rest_framework.exceptions import ValidationError
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 
 from rest_framework.status import (
@@ -42,6 +42,9 @@ from .serializers import (
     NoteManageSerializer,
     )
 
+
+def home(request):
+    return render(request,'config/home.html')
 
 
 @api_view(['GET'])
@@ -235,7 +238,7 @@ class PassengerAPI(APIView):
 
     def get_obj(self, request, id):
         try: return Passenger.objects.get(id=id, user = request.user)
-        except Passenger.DoesNotExist: raise ValidationError(f"Passenger not found for id {id} OR not associated with athenticated user")
+        except Passenger.DoesNotExist: raise ValidationError(f"Passenger not found OR Not associated with athenticated user (for id {id})")
 
     def get(self, request,id):
         passenger = self.get_obj(request, id)
