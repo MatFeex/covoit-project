@@ -3,8 +3,11 @@ import "./accueil.scss";
 import { voiture, addIcon, searchIcon } from "../../../assets/allAssets";
 import { Link } from "react-router-dom";
 import React from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Accueil() {
+  const { user } = useAuth();
+
   return (
     <div className="Accueil">
       <div className="container-fluid light-bg">
@@ -73,6 +76,17 @@ export default function Accueil() {
             at hendrerit dolor euismod sed.
           </div>
         </div>
+      </div>
+      <div className="container d-flex justify-content-center">
+        <button
+          className="btn btn-outline-primary"
+          type="button"
+          onClick={(e) => {
+            console.log(user);
+          }}
+        >
+          Test user token
+        </button>
       </div>
     </div>
   );
