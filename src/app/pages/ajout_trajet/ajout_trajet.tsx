@@ -1,7 +1,18 @@
 import "./ajout_trajet.scss";
 import React from 'react';
+import { useAuth } from "../../hooks/useAuth";
+import { Navigate } from "react-router-dom";
 
 export default function AjoutTrajet() {
+
+  const { user } = useAuth();
+
+  if(!user) {
+    return (
+    <Navigate to="/login" />
+    )
+  } 
+
   return (
     <div className="AjoutTrajet">
       <div className="container w-50">
@@ -21,7 +32,7 @@ export default function AjoutTrajet() {
               <label htmlFor="date">Date :</label>
               <input type="date" className="form-control" id="date" />
             </div>
-            <h4>Détail de la course :</h4>
+            <h4>Détail du véhicule :</h4>
             <div className="form-label-group mb-3">
               <label htmlFor="start">Modèle de la voiture :</label>
               <input type="text" className="form-control" id="start" required />

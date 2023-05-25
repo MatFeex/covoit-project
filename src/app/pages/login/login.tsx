@@ -1,7 +1,7 @@
 import "./login.scss";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
-import * as BEApi from "../../utils/RESTApi";
+import * as BEApi from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
 import React from "react";
 

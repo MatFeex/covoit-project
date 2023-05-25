@@ -88,3 +88,31 @@ export const voiture = () => {
     </svg>
   );
 }
+
+export const separateurTrajet = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="12.32"
+      height="65"
+      version="1.1"
+      viewBox="0 0 2.597 13.708"
+    >
+      <g transform="translate(-38.46 -38.816)">
+        <g
+          fill="#a40037"
+          stroke="#000"
+          strokeDasharray="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit="4"
+          strokeWidth="0.5"
+        >
+          <path d="M39.758 40.115v11.11"></path>
+          <circle cx="39.758" cy="40.115" r="1.049"></circle>
+          <circle cx="39.758" cy="51.225" r="1.049"></circle>
+        </g>
+      </g>
+    </svg>
+  );
+}

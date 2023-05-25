@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import React from "react";
-import * as BEApi from "../../utils/RESTApi";
+import * as BEApi from "../../api/RESTApi";
 
 function Logout() {
   const { user, logout } = useAuth();
@@ -9,6 +9,7 @@ function Logout() {
   user
     ? BEApi.APIlogout(user.token)
         .then((resp) => {
+          console.log(resp);
           logout();
         })
         .catch((error) => {

@@ -1,18 +1,18 @@
 import "./signin.scss";
-import Navbar from "../../component/navbar/navbar";
+import Navbar from "../../component/navbar/navbar_no_user";
 import Footer from "../../component/footer/footer";
 import { useState } from "react";
-import { signinEPF } from "../../api/api";
+import { signinEPF } from "../../api/RESTApi";
 import React from 'react';
 
 function Signin() {
   // { "first_name": "John", "last_name": "Doe", "email": "john.doe@email.fr", "password": "admin123" }
 
-  const [fname, setFName] = useState<string>();
-  const [lname, setLName] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [password1, setPassword1] = useState<string>();
-  const [password2, setPassword2] = useState<string>();
+  const [fname, setFName] = useState<string>("");
+  const [lname, setLName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password1, setPassword1] = useState<string>("");
+  const [password2, setPassword2] = useState<string>("");
 
   return (
     <div className="Accueil">

@@ -4,6 +4,8 @@ import { voiture, addIcon, searchIcon } from "../../../assets/allAssets";
 import { Link } from "react-router-dom";
 import React from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { environment } from "../../api/environment";
+import { getCourse, getUser } from "../../api/RESTApi";
 
 export default function Accueil() {
   const { user } = useAuth();
@@ -79,13 +81,25 @@ export default function Accueil() {
       </div>
       <div className="container d-flex justify-content-center">
         <button
-          className="btn btn-outline-primary"
+          className="btn btn-outline-primary m-2"
           type="button"
           onClick={(e) => {
             console.log(user);
           }}
         >
           Test user token
+        </button>
+        <button
+          className="btn btn-outline-primary m-2"
+          type="button"
+          onClick={(e) => {
+            const tk = user ? user.token : "a";
+            getUser("2", tk).then((resp) => {
+              console.log(resp);
+            });
+          }}
+        >
+          Test user
         </button>
       </div>
     </div>

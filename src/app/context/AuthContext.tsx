@@ -1,5 +1,5 @@
 import React, {createContext, FC, ReactNode, useEffect, useState} from 'react';
-import {User} from "../utils/RESTApi";
+import {User} from "../api/RESTApi";
 
 export interface AuthContextProps {
     user: User | null;

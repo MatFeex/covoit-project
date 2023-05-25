@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
-import { iconProfil } from "../../../assets/allAssets";
 import "./navbar.scss";
 import { useAuth } from "../../hooks/useAuth";
 import React from "react";
+import NavbarUser from "./navbar_user";
+import NavbarNoUser from "./navbar_no_user";
+import { Link } from "react-router-dom";
+import "../../../../node_modules/bootstrap/js/dist/collapse";
 
 function Navbar() {
   const { user } = useAuth();
@@ -10,46 +12,27 @@ function Navbar() {
   return (
     <nav className="navbar shadow sticky-top white">
       <div className="container d-flex justify-content-between">
-        <div className="navbar-brand">
-          <h3 className="pt-1">
-            <Link className="nav-link" to="/">
-              <b className="white">EPF Co'Drive</b>
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="navbar-brand">
+            <h3>
+              <Link className="nav-link" to="/">
+                <b className="white">EPF Co'Drive</b>
+              </Link>
+            </h3>
+          </div>
+          <div className="m-3">
+            <Link className="nav-link" to="/add">
+              Proposer un trajet
             </Link>
-          </h3>
+          </div>
+          <div className="m-3">
+            <Link className="nav-link" to="/list">
+              Rechercher un trajet
+            </Link>
+          </div>
         </div>
-        <div>
-          <table>
-            <tbody>
-              {!user ? (
-                <tr>
-                  <td className="px-3">
-                    <Link className="nav-link" to="/login">
-                      Se connecter
-                    </Link>
-                  </td>
-                  <td className="border-end"></td>
-                  <td className="px-3">
-                    <Link className="nav-link" to="/signin">
-                      S'inscire
-                    </Link>
-                  </td>
-                  <td>{iconProfil()}</td>
-                </tr>
-              ) : (
-                <tr>
-                  <td className="px-3">Connecté(e)</td>
-                  <td className="border-end"></td>
-                  <td className="px-3">
-                    <Link className="nav-link" to="/logout">
-                      Déconnexion
-                    </Link>
-                  </td>
-                  <td>{iconProfil()}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+
+        {user ? <NavbarUser /> : <NavbarNoUser />}
       </div>
     </nav>
   );
