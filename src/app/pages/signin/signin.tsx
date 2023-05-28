@@ -4,6 +4,7 @@ import Footer from "../../component/footer/footer";
 import { useState } from "react";
 import { signinEPF } from "../../api/RESTApi";
 import React from 'react';
+import { Link } from "react-router-dom";
 
 function Signin() {
   // { "first_name": "John", "last_name": "Doe", "email": "john.doe@email.fr", "password": "admin123" }
@@ -78,6 +79,11 @@ function Signin() {
                 type="submit"
                 value="S'inscrire"
               />
+            </div>
+            <div className="text-end mt-2">
+              <Link to="/login">
+                Déjà un compte EPF Co-Drive ? Connectez-vous 
+              </Link>
             </div>
           </div>
         </form>

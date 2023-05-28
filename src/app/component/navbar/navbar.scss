@@ -1,14 +1,33 @@
 @import "../../style/colors";
 
 .logoProfil {
-    height: 40px;
-    width: 40px;
-  }
-
-.white {
-    color: white;
+  height: 40px;
+  width: 40px;
 }
 
-.navbar {
-    background: linear-gradient(90deg, $navleft 0%, $navright 100%);
+.white {
+  color: white;
+}
+
+.nav-title {
+  color: white;
+  font-size: 24px;
+}
+
+.navbar-codrive {
+  background: linear-gradient(90deg, $navleft 0%, $navright 100%);
+}
+
+.navbar-codrive .nav-link {
+  color: white;
+}
+
+.navbar-codrive .nav-link:hover {
+  color: $light-gray;
+}
+
+.navbar-codrive .navbar-toggler {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1 );
+  border-color: white;
 }

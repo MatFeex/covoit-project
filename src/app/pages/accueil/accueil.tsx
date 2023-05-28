@@ -79,29 +79,6 @@ export default function Accueil() {
           </div>
         </div>
       </div>
-      <div className="container d-flex justify-content-center">
-        <button
-          className="btn btn-outline-primary m-2"
-          type="button"
-          onClick={(e) => {
-            console.log(user);
-          }}
-        >
-          Test user token
-        </button>
-        <button
-          className="btn btn-outline-primary m-2"
-          type="button"
-          onClick={(e) => {
-            const tk = user ? user.token : "a";
-            getUser("2", tk).then((resp) => {
-              console.log(resp);
-            });
-          }}
-        >
-          Test user
-        </button>
-      </div>
     </div>
   );
 }

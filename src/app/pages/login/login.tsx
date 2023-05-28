@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import * as BEApi from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState<string>();
@@ -60,6 +61,11 @@ function Login() {
                 type="submit"
                 value="Se connecter"
               />
+            </div>
+            <div className="text-end mt-2">
+              <Link to="/signin">
+                Pas de compte ? Inscrivez-vous à EPF Co-Drive
+              </Link>
             </div>
           </div>
         </form>

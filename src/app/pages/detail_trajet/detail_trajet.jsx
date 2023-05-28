@@ -5,6 +5,7 @@ import { getCourse, getUser } from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import imageMaps from "../../../assets/maps.png";
+import { getReadableDate, getReadableTime } from "../../utils/utils";
 
 export default function Detail_Trajet() {
   const [trajet, setTrajet] = useState("");
@@ -42,7 +43,7 @@ export default function Detail_Trajet() {
     <div className="AjoutTrajet">
       {pilot ? ( // pas placeholder
         <div className="container w-50">
-          <h2 className="my-4">
+          <h2 className="mt-4">
             Trajet du {getReadableDate(trajet.date.split("T")[0])}
           </h2>
           <div className="card shadow">
@@ -50,27 +51,26 @@ export default function Detail_Trajet() {
               <li className="list-group-item">
                 <div className="d-flex justify-content-center align-items-center">
                   <div className="m-2 d-block">
-                    <div>Départ</div>
-                    <div className="mt-4">Arrivée</div>
+                    <div className="fw-semibold">Départ</div>
+                    <div className="fw-semibold mt-3">Arrivée</div>
                   </div>
                   <div className="m-2">{separateurTrajet()}</div>
                   <div className="m-2 d-block">
-                    <div>{trajet.start}
-                    </div>
-                    <div className="mt-4">
-                      {trajet.end}
-                    </div>
+                    <div>{trajet.start}</div>
+                    <div className="mt-3">{trajet.end}</div>
                   </div>
                 </div>
-                <div className="card">
+                <div className="card my-2">
                   <img src={imageMaps}></img>
                 </div>
                 <div className="d-bloc">
-                    <div>Heure de départ :{" "}
-                    {getReadableTime(trajet.date.split("T")[1])}
+                  <div>
+                    Heure de départ :{" "}
+                    {getReadableTime(trajet.date)}
                   </div>
                   <div>
-                    Heure estimée d'arrivée : <i>temps estimée calculée par api maps</i>
+                    Heure estimée d'arrivée :{" "}
+                    <i>temps estimée calculée par api maps</i>
                   </div>
                 </div>
               </li>
@@ -87,7 +87,10 @@ export default function Detail_Trajet() {
               </li>
               <li className="list-group-item">
                 Proposé le {getReadableDate(trajet.creation_date.split("T")[0])}{" "}
-                par {pilot.first_name} {pilot.last_name}
+                par{" "}
+                <Link to={`/profil/${pilot.id}`}>
+                  {pilot.first_name} {pilot.last_name}
+                </Link>
               </li>
             </ul>
             <div className="card-body text-center">
@@ -116,30 +119,4 @@ export default function Detail_Trajet() {
       )}
     </div>
   );
-}
-
-function getReadableDate(date) {
-  // Diviser la date en parties (jour, mois, année)
-  let parties = date.split("-");
-  let jour = parties[2];
-  let mois = parties[1];
-  let annee = parties[0];
-
-  // Créer un objet Date avec les valeurs extraites
-  let dateF = new Date(annee, mois - 1, jour); // Le mois doit être décalé de 1 (0 pour janvier, 1 pour février, etc.)
-
-  // Obtenir le nom du mois à partir de l'objet Date
-  let options = { month: "long" };
-  let nomMois = dateF.toLocaleDateString("fr-FR", options);
-
-  // Construire la date finale au format "jj mois aaaa"
-  return `${jour} ${nomMois} ${annee}`;
-}
-
-function getReadableTime(time) {
-  let splitted = time.split(":");
-  let heure = splitted[0];
-  let minutes = splitted[1];
-
-  return `${heure}h${minutes}`;
 }

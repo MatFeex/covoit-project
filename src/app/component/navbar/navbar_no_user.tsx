@@ -15,7 +15,7 @@ function NavbarNoUser() {
               </Link>
             </td>
             <td className="border-end"></td>
-            <td className="px-3">
+            <td className="nav-item px-3">
               <Link className="nav-link" to="/signin">
                 S'inscire
               </Link>

@@ -1,5 +1,4 @@
 import "./erreur.scss";
-import React from 'react';
 
 export default function Erreur() {
   return (
@@ -12,4 +11,3 @@ export default function Erreur() {
     </div>
   );
 }
-

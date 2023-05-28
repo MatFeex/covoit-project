@@ -48,7 +48,7 @@ export const searchIcon = () => {
       ></path>
     </svg>
   );
-}
+};
 
 export const voiture = () => {
   return (
@@ -87,32 +87,127 @@ export const voiture = () => {
       </g>
     </svg>
   );
-}
+};
 
 export const separateurTrajet = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="12.32"
-      height="65"
+      // width="20.887"
+      height="60"
       version="1.1"
-      viewBox="0 0 2.597 13.708"
+      viewBox="0 0 6.544 25.063"
     >
-      <g transform="translate(-38.46 -38.816)">
+      <g transform="translate(-36.486 -36.843)">
         <g
-          fill="#a40037"
           stroke="#000"
           strokeDasharray="none"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeMiterlimit="4"
-          strokeWidth="0.5"
+          strokeWidth="1.2"
         >
-          <path d="M39.758 40.115v11.11"></path>
-          <circle cx="39.758" cy="40.115" r="1.049"></circle>
-          <circle cx="39.758" cy="51.225" r="1.049"></circle>
+          <path fill="#a40037" d="M39.758 40.364v18.02"></path>
+          <circle
+            cx="39.758"
+            cy="40.115"
+            r="2.272"
+            fill="#b20032"
+            fillOpacity="1"
+          ></circle>
+          <circle
+            cx="39.758"
+            cy="58.634"
+            r="2.272"
+            fill="#b20032"
+            fillOpacity="1"
+          ></circle>
         </g>
       </g>
     </svg>
   );
-}
+};
+
+export const flecheTrajet = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="60"
+      version="1.1"
+      viewBox="0 0 24.619 13.536"
+    >
+      <g
+        stroke="#000"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1"
+        transform="translate(-88.105 -72.98)"
+      >
+        <path
+          fill="none"
+          strokeDasharray="none"
+          strokeMiterlimit="4"
+          d="M91.377 76.251v6.877h18.02"
+        ></path>
+        <circle
+          cx="91.377"
+          cy="76.251"
+          r="2.272"
+          fill="#b20032"
+          fillOpacity="1"
+          strokeDasharray="none"
+          strokeMiterlimit="4"
+        ></circle>
+        <path
+          fill="#b20032"
+          fillOpacity="1"
+          d="M107.07 80.741v4.775l4.654-2.388z"
+        ></path>
+      </g>
+    </svg>
+  );
+};
+
+export const navbarToggler = () => {
+  return(
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20.697"
+      height="15"
+      fill="#fff"
+      version="1.1"
+      viewBox="0 0 13.246 9.6"
+    >
+      <path
+        fill="white"
+        stroke="none"
+        strokeDasharray="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit="4"
+        strokeWidth="0.128"
+        d="M12.286 1.6a.64.64 0 000-1.28H.96a.64.64 0 100 1.28z"
+      ></path>
+      <path
+        fill="white"
+        stroke="none"
+        strokeDasharray="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit="4"
+        strokeWidth="0.128"
+        d="M12.286 5.44a.64.64 0 000-1.28H.96a.64.64 0 000 1.28z"
+      ></path>
+      <path
+        fill="white"
+        stroke="none"
+        strokeDasharray="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeMiterlimit="4"
+        strokeWidth="0.128"
+        d="M12.286 9.28a.64.64 0 000-1.28H.96a.64.64 0 000 1.28z"
+      ></path>
+    </svg>
+  );
+};

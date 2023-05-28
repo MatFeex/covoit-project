@@ -11,7 +11,7 @@ function NavbarUser() {
           <tr>
             <td className="px-3">Connecté(e)</td>
             <td className="border-end"></td>
-            <td className="px-3">
+            <td className="nav-item px-3">
               <Link className="nav-link" to="/logout">
                 Déconnexion
               </Link>

@@ -11,6 +11,7 @@ import Erreur from "./pages/erreur/erreur";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Detail_Trajet from "./pages/detail_trajet/detail_trajet";
+import Profil from "./pages/profil/profil";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/list" element={<ListeTrajet />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/course/:id" element={<Detail_Trajet />} />
+            <Route path="/profil/:id" element={<Profil />} />
             <Route path="*" element={<Erreur />} />
           </Routes>
         </div>
