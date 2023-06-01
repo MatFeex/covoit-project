@@ -178,10 +178,16 @@ class CoursesUserAPI(APIView):
     
 
 class CourseAPI(APIView):
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.request.method == 'GET': return [AllowAny()]
+        elif self.request.method in ['PUT','DELETE']: return [IsAuthenticated()]
+        return super().get_permissions()
 
     def get_obj(self, request, id):
-        try: return Course.objects.get(id=id, user = request.user)
+        try: 
+            if request.method == 'GET' : return Course.objects.get(id=id)
+            else : return Course.objects.get(id=id, user = request.user)
         except Course.DoesNotExist: raise ValidationError("Authenticated user has no course for this id")
 
     def get(self, request,id):
