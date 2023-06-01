@@ -127,6 +127,15 @@ class UserAPI(APIView):
         return Response(data={"user": UserSerializer(user, many=False).data}, status=HTTP_200_OK)
     
 
+class UserFromIdAPI(APIView):
+
+    def get(self, request, id):
+        try: user = User.objects.get(id=id)
+        except User.DoesNotExist: return Response(data={'error':f'No user assigned to id {id}'},status=HTTP_404_NOT_FOUND)
+        return Response(data={"user": UserSerializer(user, many=False).data}, status=HTTP_200_OK)
+ 
+
+
 
 @api_view(['POST'])
 def loginUser(request):
