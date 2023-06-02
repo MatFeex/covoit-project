@@ -342,9 +342,20 @@ class NoteAPI(APIView):
         serializer = NoteManageSerializer(instance=note, data=request.data)
         serializer.is_valid(raise_exception=True)
         note = serializer.save()
-        return Response(data={"Note": NoteSerializer(note, many=False).data}, status=HTTP_200_OK)
+        return Response(data={"note": NoteSerializer(note, many=False).data}, status=HTTP_200_OK)
     
     def delete(self, request, id):
         note = self.get_obj(request, id)
         note.delete()
         return Response(data={"detail": f"The note {id} has been deleted"}, status=HTTP_200_OK)
+
+
+class NoteFromRaterIdAPI(APIView):
+
+    def get_obj(self, rater_id):
+        try: return Note.objects.filter(rater_id= rater_id)
+        except Note.DoesNotExist: raise ValidationError("This user never rated someone")
+
+    def get(self, request, rater_id):
+        notes = self.get_obj(rater_id)
+        return Response(data = {'notes' : NoteSerializer(notes, many=True).data}, status=HTTP_200_OK)
