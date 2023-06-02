@@ -35,6 +35,6 @@ urlpatterns = [
     path('api/notes/', views.NotesAPI.as_view()),
     path('api/notes/<int:id>/', views.NoteAPI.as_view()),
     path('api/notes/courses/<int:course_id>/user-rated/<int:rated_id>/', views.NotesSomeoneAPI.as_view()),
-    path('api/notes/rater/<int:rater_id>/', views.NoteFromRaterIdAPI.as_view()),
+    path('api/notes/user/<int:user_id>/', views.NoteFromUserIdAPI.as_view()),
 
 ]

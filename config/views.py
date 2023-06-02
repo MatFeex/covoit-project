@@ -350,12 +350,16 @@ class NoteAPI(APIView):
         return Response(data={"detail": f"The note {id} has been deleted"}, status=HTTP_200_OK)
 
 
-class NoteFromRaterIdAPI(APIView):
+class NoteFromUserIdAPI(APIView):
 
-    def get_obj(self, rater_id):
-        try: return Note.objects.filter(rater_id= rater_id)
-        except Note.DoesNotExist: raise ValidationError("This user never rated someone")
+    def get_obj(self, request, user_id):
+        user_type = request.query_params.get('user')
+        if user_type == 'rater' : notes = Note.objects.filter(rater_id = user_id)
+        elif user_type == 'rated' : notes = Note.objects.filter(rated_id = user_id)
+        else : raise ValidationError('Invalid or missing parameter.')
+        if not notes.exists() : raise ValidationError("This user never rated anyone." if user_type == 'rater' else "This user has never received any notes." )
+        return notes
 
-    def get(self, request, rater_id):
-        notes = self.get_obj(rater_id)
+    def get(self, request, user_id):
+        notes = self.get_obj(request, user_id)
         return Response(data = {'notes' : NoteSerializer(notes, many=True).data}, status=HTTP_200_OK)
