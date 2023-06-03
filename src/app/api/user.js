@@ -3,8 +3,4 @@ export class User {
     this.email = email;
     this.token = token;
   }
-
-  toString() {
-    return `${this.email}, ${this.token}`;
-  }
 }

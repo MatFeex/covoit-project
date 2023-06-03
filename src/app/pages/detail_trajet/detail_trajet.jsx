@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router";
 import { separateurTrajet } from "../../../assets/allAssets";
-import { getCourse, getUser } from "../../api/RESTApi";
+import { checkValidity, getCourse, getUser } from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import imageMaps from "../../../assets/maps.png";
@@ -13,7 +13,7 @@ export default function Detail_Trajet() {
   const { id } = useParams();
   const { user } = useAuth();
 
-  if (!user) {
+  if (!user || !checkValidity(user)) {
     return <Navigate to="/login" />;
   }
 
@@ -27,8 +27,7 @@ export default function Detail_Trajet() {
         setTrajet(resp);
         getUser(resp.user, user.token)
           .then((resp) => {
-            setPilot(resp);
-            console.log(resp);
+            setPilot(resp.user);
           })
           .catch((error) => {
             console.log(error);

@@ -9,13 +9,13 @@ function NavbarNoUser() {
       <table>
         <tbody>
           <tr>
-            <td className="px-3">
+            <td className="pe-3">
               <Link className="nav-link" to="/login">
                 Se connecter
               </Link>
             </td>
             <td className="border-end"></td>
-            <td className="nav-item px-3">
+            <td className="nav-item ps-3">
               <Link className="nav-link" to="/signin">
                 S'inscire
               </Link>

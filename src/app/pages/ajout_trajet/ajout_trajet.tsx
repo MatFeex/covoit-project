@@ -2,12 +2,12 @@ import "./ajout_trajet.scss";
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Navigate } from "react-router-dom";
-import { addCourse } from "../../api/RESTApi";
+import { addCourse, checkValidity } from "../../api/RESTApi";
 
 export default function AjoutTrajet() {
   const { user } = useAuth();
 
-  if (!user) {
+  if (!user || !checkValidity(user)) {
     return <Navigate to="/login" />;
   }
 
@@ -33,7 +33,7 @@ export default function AjoutTrajet() {
 
   return (
     <div className="AjoutTrajet">
-      <div className="container w-50">
+      <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
         <h2 className="my-4">Ajouter un nouveau trajet :</h2>
         <form
           className="card shadow"
@@ -66,7 +66,7 @@ export default function AjoutTrajet() {
                 onChange={(e) => setEnd(e.target.value)}
               />
             </div>
-            <div className="d-flex justify-content-start w-50 mb-3">
+            <div className="d-flex flex-row mb-3">
               <div className="form-label flex-fill">
                 <label htmlFor="date">Date :</label>
                 <input

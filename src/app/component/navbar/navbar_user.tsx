@@ -9,9 +9,9 @@ function NavbarUser() {
       <table>
         <tbody>
           <tr>
-            <td className="px-3">Connecté(e)</td>
+            <td className="pe-3">Connecté(e)</td>
             <td className="border-end"></td>
-            <td className="nav-item px-3">
+            <td className="nav-item ps-3">
               <Link className="nav-link" to="/logout">
                 Déconnexion
               </Link>

@@ -10,13 +10,14 @@ function Login() {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
 
+  const [badLogin, setBadLogin] = useState<boolean>(false);
   const [redirect, setRedirect] = useState(false);
 
   const { login } = useAuth();
 
   return (
     <div className="Accueil">
-      <div className="container w-25">
+      <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
         <h2 className="my-4">Connexion à EPF Co'Drive</h2>
         <form
           className="card shadow"
@@ -25,16 +26,19 @@ function Login() {
             e.preventDefault(); // evite d'ajouter un "?" dans l'url
             BEApi.getToken(email, password)
               .then((resp) => {
+                console.log(resp);
                 login(resp);
                 setRedirect(true);
               })
               .catch((err) => {
                 console.log(err);
+                setBadLogin(true);
               });
           }}
         >
-          {redirect ? <Navigate to="/" /> : <></>}
+          {redirect && <Navigate to="/" />}
           <div className="card-body">
+          {badLogin && <p className="alert alert-danger">Email ou mot de passe incorrect</p>}
             <div className="form-label-group mb-3">
               <label htmlFor="login">Adresse email :</label>
               <input

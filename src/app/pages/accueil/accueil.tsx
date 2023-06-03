@@ -79,6 +79,16 @@ export default function Accueil() {
           </div>
         </div>
       </div>
+      <div className="container">
+        <a
+          onClick={(e) => {
+            console.log(e);
+          }}
+          className="container btn btn-outline-primary"
+        >
+          Test
+        </a>
+      </div>
     </div>
   );
 }

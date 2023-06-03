@@ -1,10 +1,10 @@
 import "./signin.scss";
-import Navbar from "../../component/navbar/navbar_no_user";
-import Footer from "../../component/footer/footer";
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { signinEPF } from "../../api/RESTApi";
 import React from 'react';
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 function Signin() {
   // { "first_name": "John", "last_name": "Doe", "email": "john.doe@email.fr", "password": "admin123" }
@@ -14,10 +14,13 @@ function Signin() {
   const [email, setEmail] = useState<string>("");
   const [password1, setPassword1] = useState<string>("");
   const [password2, setPassword2] = useState<string>("");
+  const [redirect, setRedirect] = useState(false);
+  
+  const { login } = useAuth();
 
   return (
     <div className="Accueil">
-      <div className="container w-25">
+      <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
         <h2 className="my-4">Inscription à EPF Co'Drive</h2>
         <form
           className="card shadow"
@@ -26,13 +29,16 @@ function Signin() {
             e.preventDefault();
 
             if(password1 == password2) {
-              signinEPF(lname, fname, email, password1).then((e) => {
-                console.log(e);
+              signinEPF(lname, fname, email, password1).then((resp) => {
+                console.log(resp);
+                // login(resp);
+                // setRedirect(true);
               })
             }
 
           }}
         >
+        {redirect && <Navigate to="/" />}
           <div className="card-body">
             <div className="form-label-group mb-3">
               <label htmlFor="login">Nom :</label>

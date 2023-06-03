@@ -1,5 +1,6 @@
 import { environment } from "./environment";
 import axios from "axios";
+import { json } from "react-router";
 
 axios.defaults.headers.common = {
   Accept: "application/json",
@@ -17,7 +18,6 @@ export async function getToken(
   user: string | undefined,
   password: string | undefined
 ): Promise<User> {
-  console.log(user);
   return fetch(`${environment.api.host}/api/user/login/`, {
     method: "POST",
     headers: {
@@ -53,6 +53,33 @@ export async function APIlogout(token: string) {
     });
 }
 
+export async function signinEPF(
+  nom: string,
+  prenom: string,
+  email: string,
+  password: string
+) {
+  const resp = await fetch(`${environment.api.host}/api/user/`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      first_name: nom,
+      last_name: prenom,
+      email: email,
+      password: password,
+    }),
+  });
+  console.log(resp);
+  if (!resp.ok) {
+    console.log("Erreur dans le signin");
+    return await resp.body;
+  } else {
+    return await resp.json();
+  }
+}
+
 export async function getCourses() {
   return axios
     .get(`${environment.api.host}/api/courses/`)
@@ -86,42 +113,16 @@ export async function getUser(id: string, token: string) {
   return axios
     .get(`${environment.api.host}/api/user/${id}/`, {
       method: "GET",
-      headers: {
-        Authorization: `Token ${token}`,
-      },
+      // headers: {
+      //   Authorization: `Token ${token}`,
+      // },
     })
     .then((resp) => {
-      console.log(resp);
       return resp.data;
     })
-    .catch((error) => {
-      console.error(error);
+    .catch(() => {
       return null;
     });
-}
-
-export async function signinEPF(
-  nom: string,
-  prenom: string,
-  email: string,
-  password: string
-) {
-  const resp = await fetch(`${environment.api.host}/api/user/`, {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({
-      first_name: nom,
-      last_name: prenom,
-      email: email,
-      password: password,
-    }),
-  });
-  if (!resp.ok) {
-    console.log("Erreur dans le signin");
-  }
-  return await resp.json();
 }
 
 export async function addCourse(
@@ -157,9 +158,9 @@ export async function addCourse(
   return await resp.json();
 }
 
-export async function getNotes(token: string) {
+export async function getNotesGiven(token: string, id: string) {
   return axios
-    .get(`${environment.api.host}/api/notes/`, {
+    .get(`${environment.api.host}/api/notes/user/${id}/`, {
       method: "GET",
       headers: {
         Authorization: `Token ${token}`,
@@ -173,4 +174,33 @@ export async function getNotes(token: string) {
       console.error(error);
       return null;
     });
+}
+
+export async function getNotesGot(token: string, id: string) {
+  return axios
+    .get(`${environment.api.host}/api/notes/user/${id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+      params: {
+        user: 'rated',
+      }
+    })
+    .then((resp) => {
+      console.log(resp);
+      return resp.data;
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
+}
+
+export function checkValidity(user: any) {
+  if (new Date(user.expiry) <= new Date()) {
+    return false;
+  } else {
+    return true;
+  }
 }
