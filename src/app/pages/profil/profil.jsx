@@ -7,7 +7,7 @@ import { getReadableDate } from "../../utils/utils";
 import "./profil.scss";
 
 export default function Profil() {
-  const { id } = useParams<string>();
+  const { id } = useParams();
   const { user } = useAuth();
   const location = useLocation();
 
@@ -15,16 +15,16 @@ export default function Profil() {
     return <Navigate to="/login" />;
   }
 
-  const [notesGot, setNotesGot] = useState<any[]>([]);
+  const [notesGot, setNotesGot] = useState([]);
   // const [notesGiven, setNotesGiven] = useState<any[]>([]);
-  const [duser, setDUser] = useState<any>("");
+  const [duser, setDUser] = useState("");
   const [profilError, setProfilError] = useState(false);
 
   useEffect(() => {
     // console.log(id);
 
     if (id) {
-      getNotesWithUser(user.token, id).then((resp: any) => {
+      getNotesWithUser(user.token, id).then((resp) => {
         setNotesGot(resp);
       });
       getUser(id, user.token).then((resp) => {
@@ -68,7 +68,7 @@ export default function Profil() {
                           aria-controls="collapseAvis"
                         >
                           {(
-                            notesGot.reduce((moy: number, note: any) => {
+                            notesGot.reduce((moy, note) => {
                               console.log(note.note);
                               return moy + note.note;
                             }, 0) / notesGot.length

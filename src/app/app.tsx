@@ -9,11 +9,16 @@ import ListeTrajet from "./pages/liste_trajet/liste_trajet";
 import Logout from "./pages/logout/logout";
 import Erreur from "./pages/erreur/erreur";
 
+import "../../node_modules/bootstrap/js/dist/collapse";
+import "../../node_modules/bootstrap/js/dist/dropdown";
+import "../../node_modules/bootstrap/js/dist/modal";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Detail_Trajet from "./pages/detail_trajet/detail_trajet";
 import Profil from "./pages/profil/profil";
 
 import "./style/style.scss";
+import ModifProfil from "./pages/modif_profil/modif_profil";
 
 export default function App() {
   return (
@@ -29,6 +34,7 @@ export default function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/course/:id" element={<Detail_Trajet />} />
           <Route path="/profil/:id" element={<Profil />} />
+          <Route path="/profil" element={<ModifProfil />} />
           <Route path="*" element={<Erreur />} />
         </Routes>
         {/* <Footer /> */}
