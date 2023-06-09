@@ -1,6 +1,6 @@
 export const environment = {
     api: {
-      host: "http://localhost:8000",
+      host: "https://epfcodrive.com",
       hostl: "https://epfcodrive.com",
     },
   };
