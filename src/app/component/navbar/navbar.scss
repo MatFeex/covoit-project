@@ -18,13 +18,29 @@
   background: linear-gradient(90deg, $navleft 0%, $navright 100%);
 }
 
-.navbar-codrive .nav-link {
+.navbar-nav .nav-link {
   color: white;
+  &:focus, &:active {
+    color: white;
+  }
+  &:hover {
+    color: $light-gray;
+  }
 }
 
-.navbar-codrive .nav-link:hover {
-  color: $light-gray;
+.nav-link {
+  color: white;
+  &:focus, &:active {
+    color: white;
+  }
+  &:hover {
+    color: $light-gray;
+  }
 }
+
+// .navbar-codrive .nav-link:hover {
+//   color: $light-gray;
+// }
 
 .navbar-codrive .navbar-toggler {
   color: white;

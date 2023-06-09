@@ -28,9 +28,7 @@ function Navbar() {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <div className="mb-1">
-          {navbarToggler()}
-          </div>
+          <div className="mb-1">{navbarToggler()}</div>
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -45,7 +43,41 @@ function Navbar() {
               </Link>
             </li>
           </ul>
-          <div>{(user && checkValidity(user)) ? <NavbarUser /> : <NavbarNoUser />}</div>
+          <div>
+            {user && checkValidity(user) ? (
+              <table className="navbar-nav">
+                <tbody>
+                  <tr>
+                    <td className="pe-3">Connecté(e)</td>
+                    <td className="border-end"></td>
+                    <td className="nav-item ps-3">
+                      <Link className="nav-link" to="/logout">
+                        Déconnexion
+                      </Link>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            ) : (
+              <table className="navbar-nav">
+                <tbody>
+                  <tr>
+                    <td className="pe-3">
+                      <Link className="nav-link" to="/login">
+                        Se connecter
+                      </Link>
+                    </td>
+                    <td className="border-end"></td>
+                    <td className="nav-item ps-3">
+                      <Link className="nav-link" to="/signin">
+                        S'inscrire
+                      </Link>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
     </nav>

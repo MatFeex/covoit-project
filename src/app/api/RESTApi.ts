@@ -25,7 +25,6 @@ export async function getToken(
     },
     body: JSON.stringify({ email: user, password: password }),
   }).then((resp) => {
-    console.log(resp);
     if (!resp.ok) {
       // @ts-ignore
       throw new Error(resp.body);
@@ -35,18 +34,15 @@ export async function getToken(
 }
 
 export async function APIlogout(token: string) {
-  return fetch(`${environment.api.host}/api/user/logout/`, {
-    method: "POST",
-    headers: {
-      Authorization: `Token ${token}`,
-    },
-  })
+  axios
+    .post(`${environment.api.host}/api/user/logout/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
     .then((response) => {
-      if (response.ok) {
-        return response;
-      } else {
-        console.log("Erreur lors du logout");
-      }
+      return response;
     })
     .catch((error) => {
       console.log(error);
@@ -59,25 +55,25 @@ export async function signinEPF(
   email: string,
   password: string
 ) {
-  const resp = await fetch(`${environment.api.host}/api/user/`, {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify({
-      first_name: nom,
-      last_name: prenom,
-      email: email,
-      password: password,
-    }),
-  });
-  console.log(resp);
-  if (!resp.ok) {
-    console.log("Erreur dans le signin");
-    return await resp.body;
-  } else {
-    return await resp.json();
-  }
+  axios
+    .post(`${environment.api.host}/api/user/`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        first_name: nom,
+        last_name: prenom,
+        email: email,
+        password: password,
+      }),
+    })
+    .then((resp) => {
+      return resp.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 export async function getCourses() {
@@ -120,7 +116,8 @@ export async function getUser(id: string, token: string) {
     .then((resp) => {
       return resp.data;
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(error.response.data);
       return null;
     });
 }
@@ -135,27 +132,28 @@ export async function addCourse(
   status: string,
   token: string
 ) {
-  const resp = await fetch(`${environment.api.host}/api/courses-user/`, {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-      Authorization: `Token ${token}`,
-    },
-    body: JSON.stringify({
-      start: start,
-      end: end,
-      date: date,
-      status: status,
-      vehicle_brand: brand,
-      vehicle_model: model,
-      vehicle_seats: parseInt(seats),
-    }),
-  });
-  console.log(resp);
-  if (!resp.ok) {
-    console.log("Erreur dans l'ajout de la course");
-  }
-  return await resp.json();
+  axios
+    .post(`${environment.api.host}/api/courses-user/`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+      body: JSON.stringify({
+        start: start,
+        end: end,
+        date: date,
+        status: status,
+        vehicle_brand: brand,
+        vehicle_model: model,
+        vehicle_seats: parseInt(seats),
+      }),
+    })
+    .then((resp) => {
+      console.log("Erreur dans l'ajout de la course");
+      return resp.data;
+    });
+  // console.log(resp);
 }
 
 export async function getNotesGiven(token: string, id: string) {
@@ -167,11 +165,11 @@ export async function getNotesGiven(token: string, id: string) {
       },
     })
     .then((resp) => {
-      console.log(resp);
+      // console.log(resp);
       return resp.data;
     })
     .catch((error) => {
-      console.error(error);
+      console.log(error);
       return null;
     });
 }
@@ -184,15 +182,51 @@ export async function getNotesGot(token: string, id: string) {
         Authorization: `Token ${token}`,
       },
       params: {
-        user: 'rated',
-      }
+        user: "rated",
+      },
     })
     .then((resp) => {
-      console.log(resp);
       return resp.data;
     })
     .catch((error) => {
       console.error(error);
+      return null;
+    });
+}
+
+export async function getNotesWithUser(token: string, id: string) {
+  return axios
+    .get(`${environment.api.host}/api/notes/user/${id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+      params: {
+        user: "rated",
+      },
+    })
+    .then((resp) => {
+      return Promise.all(
+        resp.data.notes.map((note: any) => {
+          return getUser(note.rater, token).then((user: any) => {
+            return {
+              id: note.id,
+              note: note.note,
+              comment: note.comment,
+              course: note.course,
+              rater: user.user,
+              rated: note.rated,
+            };
+          });
+        })
+      );
+    })
+    .then((objects) => {
+      return objects;
+    })
+    .catch((error) => {
+      console.log("erreur tout de suite");
+      console.error(error.response.data);
       return null;
     });
 }
