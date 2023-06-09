@@ -7,13 +7,18 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 function Login() {
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [badLogin, setBadLogin] = useState<boolean>(false);
+  const [errorInfo, setErrorInfo] = useState(null);
   const [redirect, setRedirect] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
+
+  const correctInputs = () => {
+    return email.trim() != "" && password.trim() != "";
+  };
 
   return (
     <div className="Accueil">
@@ -24,21 +29,34 @@ function Login() {
           noValidate
           onSubmit={(e) => {
             e.preventDefault(); // evite d'ajouter un "?" dans l'url
+
+            setLoading(true);
+
+            if(!correctInputs()) {
+              setErrorInfo("Veuillez compléter les champs \"Adresse email\" et \"Mot de passe\".");
+              setLoading(false);
+              return;
+            }
+
             BEApi.getToken(email, password)
               .then((resp) => {
+
+                if(!resp) {
+                  console.log(resp);
+                  setErrorInfo("Adresse email ou mot de passe incorrect");
+                  setLoading(false);
+                  return
+                }
+
                 console.log(resp);
                 login(resp);
+                setLoading(false);
                 setRedirect(true);
               })
-              .catch((err) => {
-                console.log(err);
-                setBadLogin(true);
-              });
           }}
         >
           {redirect && <Navigate to="/" />}
           <div className="card-body">
-          {badLogin && <p className="alert alert-danger">Email ou mot de passe incorrect</p>}
             <div className="form-label-group mb-3">
               <label htmlFor="login">Adresse email :</label>
               <input
@@ -59,12 +77,19 @@ function Login() {
                 required
               />
             </div>
-            <div className="text-right">
+            {errorInfo && <p className="alert alert-danger">{errorInfo}</p>}
+            <div className="d-flex align-items-center">
               <input
                 className="btn btn-outline-primary"
                 type="submit"
                 value="Se connecter"
               />
+              {loading && (
+                <div
+                  className="spinner-border text-primary ms-4"
+                  role="status"
+                ></div>
+              )}
             </div>
             <div className="text-end mt-2">
               <Link to="/signin">

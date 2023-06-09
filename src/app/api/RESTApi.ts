@@ -1,6 +1,5 @@
 import { environment } from "./environment";
 import axios from "axios";
-import { json } from "react-router";
 
 axios.defaults.headers.common = {
   Accept: "application/json",
@@ -18,34 +17,42 @@ export async function getToken(
   user: string | undefined,
   password: string | undefined
 ): Promise<User> {
-  return fetch(`${environment.api.host}/api/user/login/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email: user, password: password }),
-  }).then((resp) => {
-    if (!resp.ok) {
-      // @ts-ignore
-      throw new Error(resp.body);
-    }
-    return resp.json();
-  });
+  return axios
+    .post(
+      `${environment.api.host}/api/user/login/`,
+      { email: user, password: password },
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((resp) => {
+      return resp.data;
+    }).catch(() => {
+      return null;
+    });
 }
 
 export async function APIlogout(token: string) {
-  axios
-    .post(`${environment.api.host}/api/user/logout/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    })
+  return axios
+    .post(
+      `${environment.api.host}/api/user/logout/`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+      }
+    )
     .then((response) => {
       return response;
     })
     .catch((error) => {
       console.log(error);
+      return null;
     });
 }
 
@@ -55,24 +62,20 @@ export async function signinEPF(
   email: string,
   password: string
 ) {
-  axios
+  return axios
     .post(`${environment.api.host}/api/user/`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        first_name: nom,
-        last_name: prenom,
-        email: email,
-        password: password,
-      }),
+      first_name: nom,
+      last_name: prenom,
+      email: email,
+      password: password,
     })
     .then((resp) => {
+      console.log(resp);
       return resp.data;
     })
     .catch((error) => {
-      console.log(error);
+      console.log(JSON.stringify(error.response.data));
+      return null;
     });
 }
 
@@ -100,7 +103,7 @@ export async function getCourse(id: string, token: string) {
       return resp.data;
     })
     .catch((error) => {
-      console.error(error);
+      console.log(error.response);
       return null;
     });
 }
@@ -122,6 +125,22 @@ export async function getUser(id: string, token: string) {
     });
 }
 
+export async function getConnectedUser(token: string) {
+  return axios
+    .get(`${environment.api.host}/api/user/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
+    .then((resp) => {
+      return resp.data;
+    })
+    .catch((error) => {
+      console.log(error.response.data);
+      return null;
+    });
+}
+
 export async function addCourse(
   start: string,
   end: string,
@@ -133,25 +152,29 @@ export async function addCourse(
   token: string
 ) {
   axios
-    .post(`${environment.api.host}/api/courses-user/`, {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify({
+    .post(
+      `${environment.api.host}/api/courses-user/`,
+      {
         start: start,
         end: end,
-        date: date,
-        status: status,
         vehicle_brand: brand,
         vehicle_model: model,
         vehicle_seats: parseInt(seats),
-      }),
-    })
+        date: date,
+        status: status,
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      }
+    )
     .then((resp) => {
-      console.log("Erreur dans l'ajout de la course");
+      console.log(resp.data);
       return resp.data;
+    }).catch((err) => {
+      console.log(err)
+      return null;
     });
   // console.log(resp);
 }
@@ -225,8 +248,7 @@ export async function getNotesWithUser(token: string, id: string) {
       return objects;
     })
     .catch((error) => {
-      console.log("erreur tout de suite");
-      console.error(error.response.data);
+      console.error(error);
       return null;
     });
 }

@@ -1,15 +1,16 @@
 import "./navbar.scss";
 import { useAuth } from "../../hooks/useAuth";
 import React from "react";
-import NavbarUser from "./navbar_user";
-import NavbarNoUser from "./navbar_no_user";
 import { Link } from "react-router-dom";
-import "../../../../node_modules/bootstrap/js/dist/collapse";
 import { navbarToggler } from "../../../assets/allAssets";
 import { checkValidity } from "../../api/RESTApi";
 
 function Navbar() {
   const { user } = useAuth();
+
+  const redirectToUserProfil = () => {
+
+  }
 
   return (
     <nav className="navbar navbar-codrive navbar-expand-lg white">
@@ -45,19 +46,33 @@ function Navbar() {
           </ul>
           <div>
             {user && checkValidity(user) ? (
-              <table className="navbar-nav">
-                <tbody>
-                  <tr>
-                    <td className="pe-3">Connecté(e)</td>
-                    <td className="border-end"></td>
-                    <td className="nav-item ps-3">
-                      <Link className="nav-link" to="/logout">
-                        Déconnexion
-                      </Link>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Connecté(e)
+                </a>
+
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link className="dropdown-item" to="/profil">
+                      Modifier mon profil
+                    </Link>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/logout">
+                      Déconnexion
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             ) : (
               <table className="navbar-nav">
                 <tbody>

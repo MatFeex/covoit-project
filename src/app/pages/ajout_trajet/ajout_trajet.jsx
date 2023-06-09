@@ -1,7 +1,7 @@
 import "./ajout_trajet.scss";
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, redirect } from "react-router-dom";
 import { addCourse, checkValidity } from "../../api/RESTApi";
 
 export default function AjoutTrajet() {
@@ -16,16 +16,19 @@ export default function AjoutTrajet() {
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [seats, setSeats] = useState("");
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState(new Date());
 
-  function setDay(e: string) {
+  const [loading, setLoading] = useState(false);
+  const [redirect, setRedirect] = useState(false);
+
+  function setDay(e) {
     let dateSplitted = e.split("-");
     date.setFullYear(parseInt(dateSplitted[0]));
     date.setMonth(parseInt(dateSplitted[1]));
     date.setDate(parseInt(dateSplitted[2]));
   }
 
-  function setTime(e: string) {
+  function setTime(e) {
     let dateSplitted = e.split(":");
     date.setHours(parseInt(dateSplitted[0]));
     date.setMinutes(parseInt(dateSplitted[1]));
@@ -39,9 +42,15 @@ export default function AjoutTrajet() {
           className="card shadow"
           onSubmit={(e) => {
             e.preventDefault()
-            console.log(`${start} ${end} ${brand} ${model} ${seats} ${date.toISOString()}`);
+            // console.log(`${start} ${end} ${brand} ${model} ${seats} ${date.toISOString()},${user.token}`);
 
-            addCourse(start, end, brand, model, seats, date.toISOString(), "En attente de passagers", user.token);
+            setLoading(true);
+
+            addCourse(start, end, brand, model, seats, date.toISOString(), "En attente de passagers", user.token).then((resp) => {
+              console.log(resp);
+              setLoading(false);
+              redirect(true);
+            });
           }}
         >
           <div className="card-body">
@@ -77,7 +86,7 @@ export default function AjoutTrajet() {
                   onChange={(e) => setDay(e.target.value)}
                 />
               </div>
-              <div className="form-label flex-fill mx-3">
+              <div className="form-label flex-fill ms-3">
                 <label htmlFor="heure">Heure du départ :</label>
                 <input
                   type="time"
@@ -119,11 +128,19 @@ export default function AjoutTrajet() {
                 onChange={(e) => setSeats(e.target.value)}
               />
             </div>
-            <input
-              className="btn btn-outline-primary my-2"
-              type="submit"
-              value="Ajouter"
-            />
+            <div className="d-flex align-items-center">
+              <input
+                className="btn btn-outline-primary"
+                type="submit"
+                value="Ajouter"
+              />
+              {loading && (
+                <div
+                  className="spinner-border text-primary ms-4"
+                  role="status"
+                ></div>
+              )}
+            </div>
           </div>
         </form>
       </div>
