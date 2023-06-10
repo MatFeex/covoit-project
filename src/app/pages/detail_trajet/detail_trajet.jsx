@@ -123,7 +123,7 @@ export default function Detail_Trajet() {
                     Temps de trajet : {duration}
                   </div>
                   <div>
-                    Heure de départ :{" "}
+                    Heure d'arrivée :{" "}
                     {getReadableTime(arrivalTime)}
                   </div>
                 </div>
