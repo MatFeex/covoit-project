@@ -13,15 +13,15 @@ function ListeTrajet() {
     return <Navigate to="/login" />;
   }
 
-  const [courses, setCourses] = useState<any[]>([]);
-  const [displayedCourses, setDisplayedCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState([]);
+  const [displayedCourses, setDisplayedCourses] = useState([]);
 
-  const [depart, setDepart] = useState<string>("");
-  const [arrivee, setArrivee] = useState<string>("");
-  const [date, setDate] = useState<string>("");
+  const [depart, setDepart] = useState("");
+  const [arrivee, setArrivee] = useState("");
+  const [date, setDate] = useState("");
 
   useEffect(() => {
-    getCourses().then((resp: any) => {
+    getCourses().then((resp) => {
       setCourses(resp);
       sortCourses(resp);
       setDisplayedCourses(resp);
@@ -29,28 +29,42 @@ function ListeTrajet() {
   }, []);
 
   async function recherche() {
-    let toReturn: any[] = [];
+    let toReturn = [];
     let date2 = new Date(date);
     let dateSet = [date2.getFullYear(), date2.getMonth(), date2.getDate()];
 
+    console.log(date == "");
+
     courses.map((item) => {
       let date1 = new Date(item.date);
+      console.log(depart);
+      console.log(arrivee);
+      console.log(date);
       if (
         item.start.toLowerCase().includes(depart.toLowerCase()) &&
-        item.end.toLowerCase().includes(arrivee.toLowerCase()) &&
-        date1.getFullYear() === dateSet[0] &&
-        date1.getMonth() === dateSet[1] &&
-        date1.getDate() === dateSet[2]
+        item.end.toLowerCase().includes(arrivee.toLowerCase())
       ) {
-        toReturn.push(item);
+        if (date != "") {
+          // date entrée
+
+          if (
+            date1.getFullYear() === dateSet[0] &&
+            date1.getMonth() === dateSet[1] &&
+            date1.getDate() === dateSet[2]
+          ) {
+            toReturn.push(item);
+          }
+        } else {
+          // date non entrée
+          toReturn.push(item);
+        }
       }
     });
     sortCourses(toReturn);
-    setDisplayedCourses(toReturn);
   }
 
-  function sortCourses(courses: any[], order: string = "croissant") {
-    courses.sort((a: any, b: any) => {
+  function sortCourses(courses, order = "croissant") {
+    courses.sort((a, b) => {
       let date1 = new Date(a.date);
       let date2 = new Date(b.date);
 
@@ -70,6 +84,18 @@ function ListeTrajet() {
     setDisplayedCourses(courses);
   }
 
+  const resetFiltre = () => {
+    document.getElementById("date-course").value = "";
+    document.getElementById("arrivee").value = "";
+    document.getElementById("depart").value = "";
+
+    setDate("");
+    setDepart("");
+    setArrivee("");
+
+    sortCourses([...courses]);
+  };
+
   return (
     <div className="Accueil bg-light">
       <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
@@ -84,7 +110,7 @@ function ListeTrajet() {
                   <h4>Affiner la recherche :</h4>
                 </label>
                 <div className="form-label-group mb-3">
-                  <label htmlFor="depart">Ville de départ :</label>
+                  <label htmlFor="depart">Départ :</label>
                   <input
                     id="depart"
                     className="form-control"
@@ -95,7 +121,7 @@ function ListeTrajet() {
                   ></input>
                 </div>
                 <div className="form-label-group mb-3">
-                  <label htmlFor="arrivéé">Ville de départ :</label>
+                  <label htmlFor="arrivee">Arrivée :</label>
                   <input
                     id="arrivee"
                     className="form-control"
@@ -104,9 +130,9 @@ function ListeTrajet() {
                   ></input>
                 </div>
                 <div className="form-label-group mb-3">
-                  <label htmlFor="arrivéé">Date :</label>
+                  <label htmlFor="date-course">Date :</label>
                   <input
-                    id="arrivee"
+                    id="date-course"
                     className="form-control"
                     type="date"
                     onChange={(e) => {
@@ -115,13 +141,11 @@ function ListeTrajet() {
                     }}
                   ></input>
                 </div>
-                <a
-                  className="btn btn-outline-primary"
-                  onClick={() => {
-                    recherche();
-                  }}
-                >
+                <a className="btn btn-outline-primary" onClick={() => recherche()}>
                   Appliquer
+                </a>
+                <a className="text-end mt-2 link-reset" onClick={() => resetFiltre()}>
+                  Annuler
                 </a>
                 {/* <a
                   className="btn btn-outline-primary mt-3"

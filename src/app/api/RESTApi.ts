@@ -151,7 +151,7 @@ export async function addCourse(
   status: string,
   token: string
 ) {
-  axios
+  return axios
     .post(
       `${environment.api.host}/api/courses-user/`,
       {

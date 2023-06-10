@@ -27,15 +27,19 @@ export default function AjoutTrajet() {
 
   function setDay(e) {
     let dateSplitted = e.split("-");
+    console.log(date);
     date.setFullYear(parseInt(dateSplitted[0]));
     date.setMonth(parseInt(dateSplitted[1]));
     date.setDate(parseInt(dateSplitted[2]));
+    console.log(date);
   }
 
   function setTime(e) {
     let dateSplitted = e.split(":");
+    console.log(date);
     date.setHours(parseInt(dateSplitted[0]));
     date.setMinutes(parseInt(dateSplitted[1]));
+    console.log(date);
   }
 
   
@@ -94,6 +98,7 @@ export default function AjoutTrajet() {
             });
           }}
         >
+          {redirect && <Navigate to="/"/>}
           <div className="card-body">
             <h4>Détail de la course :</h4>
             <div className="form-label mb-3">
