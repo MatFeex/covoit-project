@@ -10,6 +10,9 @@ import { getReadableDate, getReadableTime } from "../../utils/utils";
 export default function Detail_Trajet() {
   const [trajet, setTrajet] = useState("");
   const [pilot, setPilot] = useState("");
+  const [duration, setDuration] = useState("");
+  const [durationSec, setDurationSec] = useState("");
+  const [arrivalTime, setArrivalTime] = useState("");
   const { id } = useParams();
   const { user } = useAuth();
 
@@ -21,13 +24,60 @@ export default function Detail_Trajet() {
     return <Navigate to="/error" />;
   }
 
+  const loadGoogleMapsScript = (startAddress, endAddress, startDate) => {
+    
+    const googleMapsScript = document.createElement("script");
+    googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDDPYxGvkeIqQyXfZZ-8AihV71PMMCHncs&libraries=places`;
+    googleMapsScript.async = true;
+    window.document.body.appendChild(googleMapsScript);
+    googleMapsScript.onload = () => calculateDuration(startAddress, endAddress, startDate);
+  };
+
+  const calculateDuration = (startAddress, endAddress, startDate) => {
+    const service = new google.maps.DistanceMatrixService();
+  
+    const request = {
+      origins: [startAddress],
+      destinations: [endAddress],
+      travelMode: google.maps.TravelMode.DRIVING,
+    };
+  
+    service.getDistanceMatrix(request, (response, status) => {
+      if (status === google.maps.DistanceMatrixStatus.OK) {
+        const durationSec = response.rows[0].elements[0].duration.value;
+        console.log(durationSec);
+        const duration = response.rows[0].elements[0].duration.text;
+        const arrivalTime = calculateArrival(startDate, durationSec);
+        setDurationSec(durationSec);
+        setDuration(duration);
+        setArrivalTime(arrivalTime);
+        console.log(duration);
+      } else {
+        console.error("Error calculating duration:", status);
+      }
+    });
+  };
+
+  const calculateArrival = (startDate, durationSec) => {
+    const departureDate = new Date(startDate);
+    const arrivalDate = new Date(departureDate.getTime() + durationSec * 1000);
+    return arrivalDate;
+  };
+
+  
+
   useEffect(() => {
     getCourse(id, user.token)
-      .then((resp) => {
-        setTrajet(resp);
-        getUser(resp.user, user.token)
-          .then((resp) => {
-            setPilot(resp.user);
+      .then((courseResp) => {
+        setTrajet(courseResp);
+        //console.log(courseResp);
+        const startAddress = courseResp.start;
+        const endAddress = courseResp.end;
+        const startDate = courseResp.date;
+        getUser(courseResp.user, user.token)
+          .then((userResp) => {
+            setPilot(userResp.user);
+            loadGoogleMapsScript(startAddress, endAddress, startDate); 
           })
           .catch((error) => {
             console.log(error);
@@ -37,6 +87,8 @@ export default function Detail_Trajet() {
         console.log(error);
       });
   }, []);
+  
+  
 
   return (
     <div className="AjoutTrajet">
@@ -68,8 +120,11 @@ export default function Detail_Trajet() {
                     {getReadableTime(trajet.date)}
                   </div>
                   <div>
-                    Heure estimée d'arrivée :{" "}
-                    <i>temps estimée calculée par api maps</i>
+                    Temps de trajet : {duration}
+                  </div>
+                  <div>
+                    Heure de départ :{" "}
+                    {getReadableTime(arrivalTime)}
                   </div>
                 </div>
               </li>
