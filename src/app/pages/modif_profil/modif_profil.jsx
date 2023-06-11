@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import {getNotesWithUser, updateUserInfo, updateUserPassword,} from "../../api/RESTApi";
 import {useAuth} from "../../hooks/useAuth";
 import "./modif_profil.scss";
 import useInfo from "../../hooks/useInfo";
+import {canAcces} from "../../context/AuthContext";
 
 export default function ModifProfil() {
   const { user, token, updateUser } = useAuth();
+  if(!canAcces()) return <Navigate to={"/login"} />
 
   const {
     setOpenError,
@@ -59,7 +61,6 @@ export default function ModifProfil() {
       setTextSuccess("Changements effectués !");
       setOpenSuccess(true);
       updateUser();
-      console.log(user)
     });
   };
 

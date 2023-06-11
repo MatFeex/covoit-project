@@ -52,7 +52,7 @@ function Signin() {
 							signinEPF(lname, fname, email, password1)
 								.then((resp) => {
 									console.log(resp);
-									login(resp.token);
+									login(resp);
 									setLoading(false);
 									setRedirect(true);
 								})

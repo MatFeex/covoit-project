@@ -1,5 +1,6 @@
 import React, {createContext, FC, ReactNode, useEffect, useState} from 'react';
 import {getConnectedUser, logout as APILogout, Token, User} from "../api/RESTApi";
+import {useAuth} from "../hooks/useAuth";
 
 export interface AuthContextProps {
     token: Token | null;
@@ -55,4 +56,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
 export function checkValidity(token: Token) {
     return new Date(token.expiry) > new Date();
+}
+
+export function canAcces() {
+    const { user, token } = useAuth();
+    return user && token && checkValidity(token);
 }

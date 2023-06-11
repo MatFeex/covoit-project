@@ -1,12 +1,14 @@
 import "./liste_trajet.scss";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {getCourses} from "../../api/RESTApi";
 import PaginationList from "../../component/PaginationList";
 import {getReadableDate, getReadableTime} from "../../utils/utils";
 import {flecheTrajet} from "../../../assets/allAssets";
+import {canAcces} from "../../context/AuthContext";
 
 function ListeTrajet() {
+  if(!canAcces()) return <Navigate to={"/login"} />
 
   const [courses, setCourses] = useState([]);
   const [displayedCourses, setDisplayedCourses] = useState([]);

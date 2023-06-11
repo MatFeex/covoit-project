@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {useLocation, useParams} from "react-router";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import {getNotesWithUser, getUser} from "../../api/RESTApi";
 import {useAuth} from "../../hooks/useAuth";
 import {getReadableDate} from "../../utils/utils";
 import "./profil.scss";
+import {canAcces} from "../../context/AuthContext";
 
 export default function Profil() {
   const { id } = useParams();
@@ -15,6 +16,8 @@ export default function Profil() {
   // const [notesGiven, setNotesGiven] = useState<any[]>([]);
   const [duser, setDUser] = useState("");
   const [profilError, setProfilError] = useState(false);
+
+  if(!canAcces()) return <Navigate to={"/login"} />
 
   useEffect(() => {
     // console.log(id);

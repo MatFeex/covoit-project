@@ -3,9 +3,11 @@ import React, {useEffect, useRef, useState} from "react";
 import {useAuth} from "../../hooks/useAuth";
 import {Navigate} from "react-router-dom";
 import {addCourse} from "../../api/RESTApi";
+import {canAcces} from "../../context/AuthContext";
 
 export default function AjoutTrajet() {
   const { token } = useAuth();
+  if(!canAcces()) return <Navigate to={"/login"} />
 
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");

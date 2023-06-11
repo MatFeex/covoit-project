@@ -5,6 +5,7 @@ import {getCourse, getUser} from "../../api/RESTApi";
 import {useAuth} from "../../hooks/useAuth";
 import {Link} from "react-router-dom";
 import {getReadableDate, getReadableTime} from "../../utils/utils";
+import {canAcces} from "../../context/AuthContext";
 
 export default function Detail_Trajet() {
   const [trajet, setTrajet] = useState("");
@@ -13,7 +14,9 @@ export default function Detail_Trajet() {
   const [durationSec, setDurationSec] = useState("");
   const [arrivalTime, setArrivalTime] = useState("");
   const { id } = useParams();
+
   const { token } = useAuth();
+  if(!canAcces()) return <Navigate to={"/login"} />
 
   if (!id) {
     return <Navigate to="/error" />;

@@ -5,7 +5,6 @@ import Signin from "./pages/signin/signin";
 import Login from "./pages/login/login";
 import AjoutTrajet from "./pages/ajout_trajet/ajout_trajet";
 import ListeTrajet from "./pages/liste_trajet/liste_trajet";
-import Logout from "./pages/logout/logout";
 import Erreur from "./pages/erreur/erreur";
 
 import "bootstrap/js/dist/collapse";
@@ -18,11 +17,8 @@ import Profil from "./pages/profil/profil";
 import {InfoProvider} from "./context/InfoContext";
 import "./style/style.scss";
 import ModifProfil from "./pages/modif_profil/modif_profil";
-import {useAuth} from "./hooks/useAuth";
-import {checkValidity} from "./context/AuthContext";
 
 export default function App() {
-	const { token } = useAuth();
 
 	return (
 		<div className="App">
@@ -34,18 +30,12 @@ export default function App() {
 						<Route path="/login" element={<Login />} />
 						<Route path="/signin" element={<Signin />} />
 
-						{
-							!token || !checkValidity(token) && (
-								<>
-									<Route path="/add" element={<AjoutTrajet />} />
-									<Route path="/list" element={<ListeTrajet />} />
-									<Route path="/course/:id" element={<Detail_Trajet />} />
-									<Route path="/profil/:id" element={<Profil />} />
-									<Route path="/profil" element={<ModifProfil />} />
-								</>
-							)
-						}
-						<Route path="/logout" element={<Logout />} />
+						<Route path="/add" element={<AjoutTrajet />} />
+						<Route path="/list" element={<ListeTrajet />} />
+						<Route path="/course/:id" element={<Detail_Trajet />} />
+						<Route path="/profil/:id" element={<Profil />} />
+						<Route path="/profil" element={<ModifProfil />} />
+
 						<Route path="*" element={<Erreur />} />
 					</Route>
 				</Routes>

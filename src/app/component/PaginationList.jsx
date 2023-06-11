@@ -31,7 +31,7 @@ export default function PaginationList({ items, exp }){
 
                 <nav aria-label="Page navigation example">
                     <ul className="pagination">
-                        <li className={"page-item" + (page === 1 && ' disabled')}>
+                        <li className={"page-item" + (page === 1 && ' disabled')} id={"pageBtnPrevious"}>
                             <a className="page-link" onClick={() => changePage(page - 1)} aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
                         </li>
                         {
@@ -41,7 +41,7 @@ export default function PaginationList({ items, exp }){
                                 </li>
                             ))
                         }
-                        <li className={"page-item" + (page === maxPage() && ' disabled')}>
+                        <li className={"page-item" + (page === maxPage() && ' disabled')} id={"pageBtnNext"}>
                             <a className="page-link" onClick={() => changePage(page + 1)} aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
                         </li>
                     </ul>
@@ -49,10 +49,10 @@ export default function PaginationList({ items, exp }){
 
                 <div className="input-group mb-3">
                     <label className="input-group-text" htmlFor="selectNPerPage">Nombre d'élement par page</label>
-                    <select className="form-select form-select-sm" id="selectNPerPage" onChange={(e) => updateNPerPage(e)}>
+                    <select className="form-select form-select-sm" id="selectNPerPage" value={nPerPage} onChange={(e) => updateNPerPage(e)}>
                         {
                             [1, 3, 5].map((n) => (
-                                <option value={n} selected={nPerPage === n}>{n}</option>
+                                <option value={n}>{n}</option>
                             ))
                         }
                     </select>

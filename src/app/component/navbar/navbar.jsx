@@ -1,16 +1,12 @@
 import "./navbar.scss";
 import {useAuth} from "../../hooks/useAuth";
 import React from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {navbarToggler} from "../../../assets/allAssets";
-import {checkValidity} from "../../context/AuthContext";
+import {canAcces} from "../../context/AuthContext";
 
 function Navbar() {
-  const { user, token } = useAuth();
-
-  const redirectToUserProfil = () => {
-
-  }
+  const navigate = useNavigate();
 
   return (
     <nav className="navbar navbar-codrive navbar-expand-lg white">
@@ -45,7 +41,7 @@ function Navbar() {
             </li>
           </ul>
           <div>
-            {user && checkValidity(token) ? (
+            {canAcces() ? (
               <div className="dropdown">
                 <a
                   className="nav-link dropdown-toggle"
@@ -67,9 +63,12 @@ function Navbar() {
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/logout">
+                    <button className="dropdown-item" onClick={() => {
+                      logout();
+                      navigate("/");
+                    }}>
                       Déconnexion
-                    </Link>
+                    </button>
                   </li>
                 </ul>
               </div>
