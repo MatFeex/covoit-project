@@ -92,7 +92,6 @@ AUTHENTICATION NEEDED for GET & PUT
 - Request body (update the password):  
 
 {
-"email": "john.doe2@email.fr",
 "password":"admin123",
 "new_password":"admin1234"
 }  

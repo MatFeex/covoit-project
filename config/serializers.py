@@ -29,7 +29,7 @@ class UserPasswordSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email','password','new_password')
+        fields = ('password','new_password')
 
 # OTHERS SERIALIZERS
 

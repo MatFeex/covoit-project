@@ -88,10 +88,14 @@ class UserAPI(APIView):
         if self.request.method == 'POST': return [AllowAny()]
         elif self.request.method in ['GET','PUT','PATCH']: return [IsAuthenticated()]
         return super().get_permissions()
+    
+    def validate_email(self, email):
+        if '@epf' not in email : raise ValidationError("EPF members only : this email is not compliant")
 
     def post(self, request):
         serializer = UserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        self.validate_email(serializer.validated_data['email'])
         serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
         user = serializer.save()
         return Response(data={"user": UserSerializer(user, many=False).data, "token": AuthToken.objects.create(user)[1]}, status=HTTP_201_CREATED)
@@ -105,6 +109,7 @@ class UserAPI(APIView):
         user = request.user
         serializer = UserUpdateSerializer(instance=user, data=request.data)
         serializer.is_valid(raise_exception=True)
+        self.validate_email(serializer.validated_data['email'])
         actual_password = serializer.validated_data['password']
         if actual_password:
             if user.check_password(actual_password):
@@ -134,7 +139,6 @@ class UserFromIdAPI(APIView):
         except User.DoesNotExist: return Response(data={'error':f'No user assigned to id {id}'},status=HTTP_404_NOT_FOUND)
         return Response(data={"user": UserSerializer(user, many=False).data}, status=HTTP_200_OK)
  
-
 
 
 @api_view(['POST'])
