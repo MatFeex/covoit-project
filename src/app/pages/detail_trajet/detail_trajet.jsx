@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import imageMaps from "../../../assets/maps.png";
 import { getReadableDate, getReadableTime } from "../../utils/utils";
+import createPalette from "@mui/material/styles/createPalette";
 
 export default function Detail_Trajet() {
   const [trajet, setTrajet] = useState("");
@@ -15,7 +16,6 @@ export default function Detail_Trajet() {
   const [arrivalTime, setArrivalTime] = useState("");
   const { id } = useParams();
   const { user } = useAuth();
- 
 
   if (!user || !checkValidity(user)) {
     return <Navigate to="/login" />;
@@ -34,7 +34,6 @@ export default function Detail_Trajet() {
     googleMapsScript.onload = () => calculateDuration(startAddress, endAddress, startDate);
   };
 
-
   const calculateDuration = (startAddress, endAddress, startDate) => {
     const service = new google.maps.DistanceMatrixService();
   
@@ -43,21 +42,32 @@ export default function Detail_Trajet() {
       destinations: [endAddress],
       travelMode: google.maps.TravelMode.DRIVING,
     };
-         
+  
     service.getDistanceMatrix(request, (response, status) => {
       if (status === google.maps.DistanceMatrixStatus.OK) {
-        const durationSec = response.rows[0].elements[0].duration.value;
-        const duration = response.rows[0].elements[0].duration.text;
-        const arrivalTime = calculateArrival(startDate, durationSec);
-        setDurationSec(durationSec);
-        setDuration(duration);
-        setArrivalTime(arrivalTime);
-      } else {
-        console.error("Error calculating duration:", status);
+        const elementStatus = response.rows[0].elements[0]
+        if (elementStatus.status == google.maps.DistanceMatrixStatus.OK) {
+          const durationSec = response.rows[0].elements[0].duration.value;
+          const duration = response.rows[0].elements[0].duration.text;
+          const arrivalTime = calculateArrival(startDate, durationSec);
+          setDurationSec(durationSec);
+          setDuration(duration);
+          setArrivalTime(arrivalTime);
+        } 
+        else {
+        console.error("Error finding addresses:", elementStatus);
+          const duration = "Adresses incorrectes : impossible de fournir la durée du trajet";
+          const arrivalTime = startDate;
+          setDuration(duration);
+          setArrivalTime(arrivalTime);
+        }
       }
+      else {
+        console.error("Error calculating direction:", status);
+      }
+      
       initMap(startAddress,endAddress);
     }); 
-
   };
 
   const calculateArrival = (startDate, durationSec) => {
@@ -79,8 +89,6 @@ export default function Detail_Trajet() {
     const mapElement = document.getElementById('map');
     const map = new google.maps.Map(mapElement, mapOptions);
     directionsRenderer.setMap(map);
-
-    console.log(typeof map);
 
     const request = {
       origin: startAddress,
@@ -105,7 +113,6 @@ export default function Detail_Trajet() {
           .then((userResp) => {
             setPilot(userResp.user);
             loadGoogleMapsScript(startAddress, endAddress, startDate); 
-            
           })
           .catch((error) => {
             console.log(error);
@@ -115,8 +122,6 @@ export default function Detail_Trajet() {
         console.log(error);
       });
   }, []);
-
-
   
   
 
@@ -202,9 +207,5 @@ export default function Detail_Trajet() {
         </div>
       )}
     </div>
-    
   );
-
-
-  
 }
