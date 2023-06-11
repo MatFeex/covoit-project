@@ -6,6 +6,7 @@ import {navbarToggler} from "../../../assets/allAssets";
 import {canAcces} from "../../context/AuthContext";
 
 function Navbar() {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   return (
