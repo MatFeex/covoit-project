@@ -3,12 +3,9 @@ import React, {useEffect, useRef, useState} from "react";
 import {useAuth} from "../../hooks/useAuth";
 import {Navigate} from "react-router-dom";
 import {addCourse} from "../../api/RESTApi";
-import {checkValidity} from "../../context/AuthContext";
 
 export default function AjoutTrajet() {
-  const { user, token } = useAuth();
-
-  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
+  const { token } = useAuth();
 
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");

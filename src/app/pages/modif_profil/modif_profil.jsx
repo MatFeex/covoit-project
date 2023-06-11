@@ -1,17 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Navigate} from "react-router";
 import {Link} from "react-router-dom";
 import {getNotesWithUser, updateUserInfo, updateUserPassword,} from "../../api/RESTApi";
 import {useAuth} from "../../hooks/useAuth";
 import "./modif_profil.scss";
 import useInfo from "../../hooks/useInfo";
-import {checkValidity} from "../../context/AuthContext";
 
 export default function ModifProfil() {
   const { user, token, updateUser } = useAuth();
 
   const {
-    setOpenBackdrop,
     setOpenError,
     setTextError,
     setOpenSuccess,
@@ -31,8 +28,6 @@ export default function ModifProfil() {
   const [newPassword2, setNewPassword2] = useState("");
 
   const [passwordValidation, setPasswordValidation] = useState("");
-
-  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
 
   useEffect(() => {
     getNotesWithUser(token.token, user.id).then((resp) => {
@@ -69,14 +64,14 @@ export default function ModifProfil() {
   };
 
   const savePasswordChange = () => {
-    if (newPassword1 != newPassword2) {
+    if (newPassword1 !== newPassword2) {
       setTextError("Les mots de passe entrés sont différents");
       setOpenError(true);
       setLoading(false);
       return;
     }
 
-    if (oldPassword != "" && newPassword1 != "" && newPassword2 != "") {
+    if (oldPassword !== "" && newPassword1 !== "" && newPassword2 !== "") {
       console.log(oldPassword);
       console.log(newPassword1);
 

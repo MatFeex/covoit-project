@@ -1,18 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {Navigate, useLocation, useParams} from "react-router";
+import {useLocation, useParams} from "react-router";
 import {Link} from "react-router-dom";
 import {getNotesWithUser, getUser} from "../../api/RESTApi";
 import {useAuth} from "../../hooks/useAuth";
 import {getReadableDate} from "../../utils/utils";
 import "./profil.scss";
-import {checkValidity} from "../../context/AuthContext";
 
 export default function Profil() {
   const { id } = useParams();
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const location = useLocation();
-
-  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
 
   const [notesGot, setNotesGot] = useState();
   // const [notesGiven, setNotesGiven] = useState<any[]>([]);
