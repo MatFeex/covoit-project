@@ -1,10 +1,7 @@
-import {Link} from "react-router-dom";
-import {getReadableDate, getReadableTime} from "../utils/utils";
-import {flecheTrajet} from "../../assets/allAssets";
 import React, {useEffect, useState} from "react";
 
 
-export default function PaginationList({ items }){
+export default function PaginationList({ items, exp }){
     const [page, setPage] = useState(1);
     const [nPerPage, setNPerPage] = useState(3);
     const [listPageBtn, setListPageBtn] = useState([1, 2, 3])
@@ -50,37 +47,7 @@ export default function PaginationList({ items }){
                     ))
                 }
             </select>
-
-            {currentItems.map((course) => {
-                {
-                    let test = new Date(course.date);
-                }
-                return (
-                    <div key={course.id} className="trajet mb-3">
-                        <Link to={`/course/${course.id}`} className="text-decoration-none link-dark">
-                            <div className="card shadow card-course">
-                                <div className="card-body placeholder-glow">
-                                    <h5 className="card-title fw-semibold">
-                                        Trajet du {getReadableDate(course.date)}
-                                    </h5>
-                                    <div className="d-flex">
-                                        <div className="d-bloc justify-content-start align-items-center mb-2">
-                                            <div>
-                                                {course.start}, {getReadableTime(course.date)}
-                                            </div>
-                                            <div className="m-2 d-flex align-items-end">
-                                                <div className="me-2">{flecheTrajet()}</div>
-                                                <div>{course.end}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-                );
-            })}
-
+            {currentItems.map((course) => exp(course))}
         </>
     )
 

@@ -1,9 +1,11 @@
 import "./liste_trajet.scss";
-import { Navigate } from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { checkValidity, getCourses } from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
 import PaginationList from "../../component/PaginationList";
+import {getReadableDate, getReadableTime} from "../../utils/utils";
+import {flecheTrajet} from "../../../assets/allAssets";
 
 function ListeTrajet() {
   const { user } = useAuth();
@@ -179,8 +181,30 @@ function ListeTrajet() {
               <div>
                 {displayedCourses.length === 0 ? (
                   <h4 className="m-3">Aucune course trouvée</h4>
-                ) : <PaginationList items={displayedCourses} />}
-
+                ) : <PaginationList items={displayedCourses} exp={(course) => (
+                  <div key={course.id} className="trajet mb-3">
+                    <Link to={`/course/${course.id}`} className="text-decoration-none link-dark">
+                      <div className="card shadow card-course">
+                        <div className="card-body placeholder-glow">
+                          <h5 className="card-title fw-semibold">
+                            Trajet du {getReadableDate(course.date)}
+                          </h5>
+                          <div className="d-flex">
+                            <div className="d-bloc justify-content-start align-items-center mb-2">
+                              <div>
+                                {course.start}, {getReadableTime(course.date)}
+                              </div>
+                              <div className="m-2 d-flex align-items-end">
+                                <div className="me-2">{flecheTrajet()}</div>
+                                <div>{course.end}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                )}/>}
               </div>
             ) : (
               <p>Chargement des trajets...</p>
