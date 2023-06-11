@@ -1,5 +1,6 @@
 import "./ajout_trajet.scss";
 import React, { useState } from "react";
+import { useEffect, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Navigate, redirect } from "react-router-dom";
 import { addCourse, checkValidity } from "../../api/RESTApi";
@@ -21,18 +22,62 @@ export default function AjoutTrajet() {
   const [loading, setLoading] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
+  const startInputRef = useRef(null);
+  const endInputRef = useRef(null);
+
   function setDay(e) {
     let dateSplitted = e.split("-");
+    console.log(date);
     date.setFullYear(parseInt(dateSplitted[0]));
     date.setMonth(parseInt(dateSplitted[1]));
     date.setDate(parseInt(dateSplitted[2]));
+    console.log(date);
   }
 
   function setTime(e) {
     let dateSplitted = e.split(":");
+    console.log(date);
     date.setHours(parseInt(dateSplitted[0]));
     date.setMinutes(parseInt(dateSplitted[1]));
+    console.log(date);
   }
+
+  
+  useEffect(() => {
+    const loadGoogleMapsScript = () => {
+      const googleMapsScript = document.createElement("script");
+      googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDDPYxGvkeIqQyXfZZ-8AihV71PMMCHncs&libraries=places`;
+      googleMapsScript.async = true;
+      window.document.body.appendChild(googleMapsScript);
+      googleMapsScript.onload = initAutocomplete;
+    };
+  
+    const initAutocomplete = () => {
+      const startAutocomplete = new google.maps.places.Autocomplete(startInputRef.current);
+      const endAutocomplete = new google.maps.places.Autocomplete(endInputRef.current);
+  
+      startAutocomplete.addListener("place_changed", () => {
+        const place = startAutocomplete.getPlace();
+        if (!place.geometry || !place.formatted_address) {
+          console.error("Invalid start");
+          return;
+        }
+        setStart(place.formatted_address);
+      });
+  
+      endAutocomplete.addListener("place_changed", () => {
+        const place = endAutocomplete.getPlace();
+        if (!place.geometry || !place.formatted_address) {
+          console.error("Invalid end");
+          return;
+        }
+        setEnd(place.formatted_address);
+      });
+    };
+  
+    loadGoogleMapsScript();
+  }, []);
+  
 
   return (
     <div className="AjoutTrajet">
@@ -49,10 +94,11 @@ export default function AjoutTrajet() {
             addCourse(start, end, brand, model, seats, date.toISOString(), "En attente de passagers", user.token).then((resp) => {
               console.log(resp);
               setLoading(false);
-              redirect(true);
+              setRedirect(true);
             });
           }}
         >
+          {redirect && <Navigate to="/"/>}
           <div className="card-body">
             <h4>Détail de la course :</h4>
             <div className="form-label mb-3">
@@ -61,6 +107,7 @@ export default function AjoutTrajet() {
                 type="text"
                 className="form-control"
                 id="start"
+                ref={startInputRef}
                 required
                 onChange={(e) => setStart(e.target.value)}
               />
@@ -71,6 +118,7 @@ export default function AjoutTrajet() {
                 type="text"
                 className="form-control"
                 id="end"
+                ref={endInputRef}
                 required
                 onChange={(e) => setEnd(e.target.value)}
               />

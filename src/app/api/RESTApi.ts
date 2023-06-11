@@ -6,6 +6,7 @@ axios.defaults.headers.common = {
   "Content-Type": "application/json",
 };
 
+
 export interface User {
   fname: string;
   name: string;
@@ -17,6 +18,7 @@ export async function getToken(
   user: string | undefined,
   password: string | undefined
 ): Promise<User> {
+
   return axios
     .post(
       `${environment.api.host}/api/user/login/`,
@@ -151,7 +153,7 @@ export async function addCourse(
   status: string,
   token: string
 ) {
-  axios
+  return axios
     .post(
       `${environment.api.host}/api/courses-user/`,
       {
