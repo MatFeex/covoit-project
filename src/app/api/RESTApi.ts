@@ -39,7 +39,7 @@ export async function getToken( user: string | undefined, password: string | und
     });
 }
 
-export async function APIlogout(token: string) {
+export async function logout(token: string) {
   return axios
     .post(
       `${environment.api.host}/api/user/logout/`,
@@ -84,7 +84,7 @@ export async function getCourses() {
     .then((resp) => {
       return resp.data;
     })
-    .catch((error) => {
+    .catch(() => {
       return null;
     });
 }
@@ -111,9 +111,9 @@ export async function getUser(id: string, token: string) {
   return axios
     .get(`${environment.api.host}/api/user/${id}/`, {
       method: "GET",
-      // headers: {
-      //   Authorization: `Token ${token}`,
-      // },
+      headers: {
+          Authorization: `Token ${token}`,
+      },
     })
     .then((resp) => {
       return resp.data;
@@ -132,6 +132,7 @@ export async function getConnectedUser(token: string) : Promise<User | null> {
       },
     })
     .then((resp) => {
+        console.log(resp.data)
       return resp.data;
     })
     .catch((error) => {

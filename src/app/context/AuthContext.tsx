@@ -1,5 +1,5 @@
 import React, {createContext, FC, ReactNode, useEffect, useState} from 'react';
-import {getConnectedUser, Token, User} from "../api/RESTApi";
+import {getConnectedUser, logout as APILogout, Token, User} from "../api/RESTApi";
 
 export interface AuthContextProps {
     token: Token | null;
@@ -37,8 +37,10 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     const login = (token: Token) => setToken(token);
 
     const logout = () => {
-        setToken(null);
-        localStorage.removeItem('token');
+        if(token) APILogout(token.token).finally(() => {
+            setToken(null);
+            localStorage.removeItem('token');
+        });
     }
     const updateUser = () => {
         if(token) getConnectedUser(token.token).then(user => setUser(user))

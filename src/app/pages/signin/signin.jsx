@@ -8,7 +8,7 @@ import useInfo from "../../hooks/useInfo";
 function Signin() {
 	// { "first_name": "John", "last_name": "Doe", "email": "john.doe@email.fr", "password": "admin123" }
 
-	const { setOpenBackdrop, setOpenError, setTextError, setOpenSuccess, setTextSuccess } = useInfo();
+	const { setOpenError, setTextError } = useInfo();
 	const [fname, setFName] = useState("");
 	const [lname, setLName] = useState("");
 	const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ function Signin() {
 	const { login } = useAuth();
 
 	const correctInputs = () => {
-		return fname.trim() != "" && lname.trim() != "" && email.trim() != "" && password1.trim() != "";
+		return fname.trim() !== "" && lname.trim() !== "" && email.trim() !== "" && password1.trim() !== "";
 	};
 
 	return (
@@ -42,13 +42,13 @@ function Signin() {
 							return;
 						}
 
-						if (password1 != password2) {
+						if (password1 !== password2) {
 							setErrorInfo("Les mots de passe entrés sont différents");
 							setLoading(false);
 							return;
 						}
 
-						if (password1 == password2) {
+						if (password1 === password2) {
 							signinEPF(lname, fname, email, password1)
 								.then((resp) => {
 									console.log(resp);
@@ -56,7 +56,7 @@ function Signin() {
 									setLoading(false);
 									setRedirect(true);
 								})
-								.catch((error) => {
+								.catch(() => {
 									setTextError('This email alredy exists, please login.');
 									setOpenError(true);
 									setLoading(false);

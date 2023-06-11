@@ -21,7 +21,6 @@ function ListeTrajet() {
 
   useEffect(() => {
     getCourses().then((resp) => {
-      console.log(resp)
       setCourses(resp);
       sortCourses(resp);
       setDisplayedCourses(resp);
