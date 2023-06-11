@@ -61,6 +61,7 @@ function Signin() {
 								.catch((error) => {
 									setTextError('This email alredy exists, please login.');
 									setOpenError(true);
+									setLoading(false);
 								});
 						}
 					}}

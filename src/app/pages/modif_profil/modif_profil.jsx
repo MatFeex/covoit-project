@@ -6,14 +6,37 @@ import {
   getConnectedUser,
   getNotesWithUser,
   getUser,
+  updateUserInfo,
+  updateUserPassword,
 } from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
+import useInfo from "../../hooks/useInfo";
 import "./modif_profil.scss";
 
 export default function ModifProfil() {
   const { user } = useAuth();
 
+  const {
+    setOpenBackdrop,
+    setOpenError,
+    setTextError,
+    setOpenSuccess,
+    setTextSuccess,
+  } = useInfo();
+
   const [conUser, setConUser] = useState();
+
+  const [loading, setLoading] = useState(false);
+
+  const [newFName, setNewFName] = useState("");
+  const [newLName, setNewLName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword1, setNewPassword1] = useState("");
+  const [newPassword2, setNewPassword2] = useState("");
+
+  const [passwordValidation, setPasswordValidation] = useState("");
 
   if (!user || !checkValidity(user)) {
     return <Navigate to="/login" />;
@@ -26,14 +49,83 @@ export default function ModifProfil() {
     });
   }, []);
 
-  const saveInfoChanges = (e) => {
-    console.log(e);
+  const saveInfoChanges = () => {
+    if (passwordValidation === "") {
+      setTextError("Le mot de passe entré est nul");
+      setOpenError(true);
+      setLoading(false);
+      return;
+    }
+    if(newFName.trim() === "" && newLName.trim() === "" && newEmail.trim() === "") {
+      setTextError("Veuillez remplir au moins un des champs");
+      setOpenError(true);
+      setLoading(false);
+      return;
+    }
+    updateUserInfo(
+      newFName ? newFName : conUser.first_name,
+      newLName ? newLName : conUser.last_name,
+      newEmail ? newEmail : conUser.email,
+      passwordValidation,
+      user.token
+    ).then((resp) => {
+      setLoading(false);
+      setTextSuccess("Changements effectués !");
+      setOpenSuccess(true);
+      getConnectedUser(user.token).then((resp) => {
+        console.log(resp);
+        setConUser(resp);
+      });
+    });
+  };
+
+  const savePasswordChange = () => {
+    if (newPassword1 != newPassword2) {
+      setTextError("Les mots de passe entrés sont différents");
+      setOpenError(true);
+      setLoading(false);
+      return;
+    }
+
+    if (oldPassword != "" && newPassword1 != "" && newPassword2 != "") {
+      console.log(oldPassword);
+      console.log(newPassword1);
+
+      updateUserPassword(conUser.email, oldPassword, newPassword1, user.token)
+        .then((resp) => {
+          if (resp) {
+            setTextSuccess("Mot de passe modifié avec succès !");
+            setOpenSuccess(true);
+          } else {
+            setTextError("Mot de passe incorrect");
+            setOpenError(true);
+          }
+          setLoading(false);
+          console.log(resp);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+        });
+    } else {
+      setTextError("Veuillez remplir tout les champs");
+      setOpenError(true);
+      setLoading(false);
+    }
   };
 
   return (
     <div>
       <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
-        <h2 className="my-4">Modification de votre profil</h2>
+        <div className="d-flex align-items-center">
+          <h2 className="my-4">Modification de votre profil</h2>
+          {loading && (
+            <div
+              className="spinner-border text-primary ms-4"
+              role="status"
+            ></div>
+          )}
+        </div>
         <div className="card shadow">
           <div className="card-body">
             <h4 className="card-title">Informations générales</h4>
@@ -79,23 +171,23 @@ export default function ModifProfil() {
                 >
                   <div className="card-body">
                     <div className="form-label-group mb-3">
-                      <label htmlFor="login">Nom :</label>
-                      <input
-                        id="login"
-                        className="form-control required"
-                        type="text"
-                        // onChange={(e) => setLName(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="form-label-group mb-3">
                       <label htmlFor="login">Prénom :</label>
                       <input
                         id="login"
                         className="form-control required"
                         type="text"
                         required
-                        // onChange={(e) => setFName(e.target.value)}
+                        onChange={(e) => setNewFName(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-label-group mb-3">
+                      <label htmlFor="login">Nom :</label>
+                      <input
+                        id="login"
+                        className="form-control required"
+                        type="text"
+                        onChange={(e) => setNewLName(e.target.value)}
+                        required
                       />
                     </div>
                     <div className="form-label-group mb-3">
@@ -105,7 +197,7 @@ export default function ModifProfil() {
                         className="form-control required"
                         type="text"
                         required
-                        // onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setNewEmail(e.target.value)}
                       />
                     </div>
                     <button
@@ -138,7 +230,9 @@ export default function ModifProfil() {
                                 className="form-control"
                                 type="password"
                                 required
-                                // onChange={(e) => setPassword1(e.target.value)}
+                                onChange={(e) =>
+                                  setPasswordValidation(e.target.value)
+                                }
                               />
                             </div>
                           </div>
@@ -155,7 +249,11 @@ export default function ModifProfil() {
                               className="btn btn-primary"
                               data-bs-dismiss="modal"
                               onClick={(event) => {
+                                setLoading(true);
                                 saveInfoChanges(event);
+                                document
+                                  .getElementById("collapseInfos")
+                                  .classList.remove("show");
                               }}
                             >
                               Enregistrer les modifications
@@ -187,17 +285,17 @@ export default function ModifProfil() {
                   Modifier mon mot de passe
                 </a>
               </div>
-              <div className="collapse mt-2" id="collapseMDP">
-                <form className=" card" noValidate>
+              <div className="collapse mt-3" id="collapseMDP">
+                <div className="card" noValidate>
                   <div className="card-body">
                     <div className="form-label-group mb-3">
                       <label htmlFor="login">Ancien mot de passe :</label>
                       <input
                         id="login"
                         className="form-control"
-                        type="text"
+                        type="password"
                         required
-                        // onChange={(e) => setLName(e.target.value)}
+                        onChange={(e) => setOldPassword(e.target.value)}
                       />
                     </div>
                     <div className="form-label-group mb-3">
@@ -205,9 +303,9 @@ export default function ModifProfil() {
                       <input
                         id="login"
                         className="form-control"
-                        type="text"
+                        type="password"
                         required
-                        // onChange={(e) => setFName(e.target.value)}
+                        onChange={(e) => setNewPassword1(e.target.value)}
                       />
                     </div>
                     <div className="form-label-group mb-3">
@@ -217,26 +315,23 @@ export default function ModifProfil() {
                       <input
                         id="login"
                         className="form-control"
-                        type="text"
+                        type="password"
                         required
-                        // onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setNewPassword2(e.target.value)}
                       />
                     </div>
                     <div className="d-flex align-items-center">
                       <input
                         className="btn btn-outline-primary"
-                        type="submit"
                         value="Enregistrer les modifications"
+                        onClick={() => {
+                          setLoading(true);
+                          savePasswordChange();
+                        }}
                       />
-                      {/* {loading && (
-                          <div
-                            className="spinner-border text-primary ms-4"
-                            role="status"
-                          ></div>
-                        )} */}
                     </div>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </div>
