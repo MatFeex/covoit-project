@@ -14,7 +14,7 @@ from .models import User,Course,Note,Passenger
 from django.contrib.auth.hashers import make_password
 from rest_framework.exceptions import ValidationError
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 
 
 from rest_framework.status import (
@@ -107,15 +107,11 @@ class UserAPI(APIView):
 
     def put(self, request):
         user = request.user
-        serializer = UserUpdateSerializer(instance=user, data=request.data)
+        serializer = UserUpdateSerializer(instance=user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        self.validate_email(serializer.validated_data['email'])
-        actual_password = serializer.validated_data['password']
-        if actual_password:
-            if user.check_password(actual_password):
-                serializer.validated_data['password'] = make_password(actual_password)
-                user = serializer.save()
-            else: return Response(status=HTTP_401_UNAUTHORIZED)
+        email = serializer.validated_data.get('email')
+        if email : self.validate_email(email)  # Use get() to handle missing key gracefully
+        user = serializer.save()
         return Response(data={"user": UserSerializer(user, many=False).data}, status=HTTP_200_OK)
     
     def patch(self, request):

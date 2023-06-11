@@ -23,6 +23,7 @@ class UserUpdateSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email','password')
+        partial = True
 
 class UserPasswordSerializer(ModelSerializer):
     new_password = CharField(required=True)
@@ -47,6 +48,7 @@ class CourseManageSerializer(ModelSerializer):
     class Meta :
         model = Course
         fields = ('start','end','date','status','vehicle_brand','vehicle_model','vehicle_seats')
+        partial = True
 
 # PASSENGERS
 
@@ -60,6 +62,7 @@ class PassengerManageSerializer(ModelSerializer):
     class Meta :
         model = Passenger
         fields = ('course',)
+        partial = True
 
     def validate(self, data):
         user = self.context['request'].user
@@ -88,3 +91,4 @@ class NoteManageSerializer(ModelSerializer):
     class Meta :
         model = Note
         fields = ('note','comment')
+        partial = True
