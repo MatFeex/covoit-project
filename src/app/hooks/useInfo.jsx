@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import {useContext} from "react";
 import InfoContext from "../context/InfoContext";
 
 const useInfo = () => {

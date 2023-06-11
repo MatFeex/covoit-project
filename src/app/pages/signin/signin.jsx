@@ -1,10 +1,8 @@
 import "./signin.scss";
-import { useState } from "react";
-import { Navigate } from "react-router-dom";
-import { signinEPF } from "../../api/RESTApi";
-import React from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import React, {useState} from "react";
+import {Link, Navigate} from "react-router-dom";
+import {signinEPF} from "../../api/RESTApi";
+import {useAuth} from "../../hooks/useAuth";
 import useInfo from "../../hooks/useInfo";
 
 function Signin() {

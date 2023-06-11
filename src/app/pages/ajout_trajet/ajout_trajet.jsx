@@ -1,16 +1,14 @@
 import "./ajout_trajet.scss";
-import React, { useState } from "react";
-import { useEffect, useRef } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { Navigate, redirect } from "react-router-dom";
-import { addCourse, checkValidity } from "../../api/RESTApi";
+import React, {useEffect, useRef, useState} from "react";
+import {useAuth} from "../../hooks/useAuth";
+import {Navigate} from "react-router-dom";
+import {addCourse} from "../../api/RESTApi";
+import {checkValidity} from "../../context/AuthContext";
 
 export default function AjoutTrajet() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
-  if (!user || !checkValidity(user)) {
-    return <Navigate to="/login" />;
-  }
+  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
 
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
@@ -91,7 +89,7 @@ export default function AjoutTrajet() {
 
             setLoading(true);
 
-            addCourse(start, end, brand, model, seats, date.toISOString(), "En attente de passagers", user.token).then((resp) => {
+            addCourse(start, end, brand, model, seats, date.toISOString(), "En attente de passagers", token.token).then((resp) => {
               console.log(resp);
               setLoading(false);
               setRedirect(true);

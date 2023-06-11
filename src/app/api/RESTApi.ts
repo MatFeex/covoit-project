@@ -1,24 +1,25 @@
-import { environment } from "./environment";
+import {environment} from "./environment";
 import axios from "axios";
-import { env } from "yargs";
 
 axios.defaults.headers.common = {
   Accept: "application/json",
   "Content-Type": "application/json",
 };
 
-
-export interface User {
-  fname: string;
-  name: string;
-  email: string;
-  token: string;
+export interface Token {
+    token: string;
+    expiry: string;
 }
 
-export async function getToken(
-  user: string | undefined,
-  password: string | undefined
-): Promise<User> {
+export interface User {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    date_joined: string;
+}
+
+export async function getToken( user: string | undefined, password: string | undefined): Promise<Token> {
 
   return axios
     .post(
@@ -59,12 +60,7 @@ export async function APIlogout(token: string) {
     });
 }
 
-export async function signinEPF(
-  nom: string,
-  prenom: string,
-  email: string,
-  password: string
-) {
+export async function signinEPF(nom: string, prenom: string, email: string, password: string ){
   return axios
     .post(`${environment.api.host}/api/user/`, {
       first_name: nom,
@@ -128,7 +124,7 @@ export async function getUser(id: string, token: string) {
     });
 }
 
-export async function getConnectedUser(token: string) {
+export async function getConnectedUser(token: string) : Promise<User | null> {
   return axios
     .get(`${environment.api.host}/api/user/`, {
       headers: {
@@ -220,7 +216,7 @@ export async function getNotesGot(token: string, id: string) {
     });
 }
 
-export async function getNotesWithUser(token: string, id: string) {
+export async function getNotesWithUser(token: string, id: number) {
   return axios
     .get(`${environment.api.host}/api/notes/user/${id}/`, {
       method: "GET",
@@ -254,14 +250,6 @@ export async function getNotesWithUser(token: string, id: string) {
       console.error(error);
       return null;
     });
-}
-
-export function checkValidity(user: any) {
-  if (new Date(user.expiry) <= new Date()) {
-    return false;
-  } else {
-    return true;
-  }
 }
 
 export async function updateUserInfo(newFName: string, newLName: string, newEmail: string, password: string, token: string) {

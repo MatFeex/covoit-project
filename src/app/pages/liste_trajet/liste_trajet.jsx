@@ -1,18 +1,16 @@
 import "./liste_trajet.scss";
 import {Link, Navigate} from "react-router-dom";
-import React, { useState, useEffect } from "react";
-import { checkValidity, getCourses } from "../../api/RESTApi";
-import { useAuth } from "../../hooks/useAuth";
+import React, {useEffect, useState} from "react";
+import {getCourses} from "../../api/RESTApi";
+import {useAuth} from "../../hooks/useAuth";
 import PaginationList from "../../component/PaginationList";
 import {getReadableDate, getReadableTime} from "../../utils/utils";
 import {flecheTrajet} from "../../../assets/allAssets";
+import {checkValidity} from "../../context/AuthContext";
 
 function ListeTrajet() {
-  const { user } = useAuth();
-
-  if (!user || !checkValidity(user)) {
-    return <Navigate to="/login" />;
-  }
+  const { user, token } = useAuth();
+  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
 
   const [courses, setCourses] = useState([]);
   const [displayedCourses, setDisplayedCourses] = useState([]);
@@ -23,6 +21,7 @@ function ListeTrajet() {
 
   useEffect(() => {
     getCourses().then((resp) => {
+      console.log(resp)
       setCourses(resp);
       sortCourses(resp);
       setDisplayedCourses(resp);

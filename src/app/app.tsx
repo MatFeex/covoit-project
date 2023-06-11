@@ -1,6 +1,5 @@
 import React from "react";
 import Navbar from "./component/navbar/navbar";
-import Footer from "./component/footer/footer";
 import Accueil from "./pages/accueil/accueil";
 import Signin from "./pages/signin/signin";
 import Login from "./pages/login/login";
@@ -13,10 +12,10 @@ import "bootstrap/js/dist/collapse";
 import "bootstrap/js/dist/dropdown";
 import "bootstrap/js/dist/modal";
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import Detail_Trajet from "./pages/detail_trajet/detail_trajet";
 import Profil from "./pages/profil/profil";
-import { InfoProvider } from "./context/InfoContext";
+import {InfoProvider} from "./context/InfoContext";
 import "./style/style.scss";
 import ModifProfil from "./pages/modif_profil/modif_profil";
 

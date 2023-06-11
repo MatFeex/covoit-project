@@ -1,9 +1,8 @@
 import "./login.scss";
-import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import {useState} from "react";
+import {Link, Navigate} from "react-router-dom";
 import * as BEApi from "../../api/RESTApi";
-import { useAuth } from "../../hooks/useAuth";
-import { Link } from "react-router-dom";
+import {useAuth} from "../../hooks/useAuth";
 
 
 function Login() {
@@ -18,7 +17,7 @@ function Login() {
   const { login } = useAuth();
 
   const correctInputs = () => {
-    return email.trim() != "" && password.trim() != "";
+    return email.trim() !== "" && password.trim() !== "";
   };
 
   return (

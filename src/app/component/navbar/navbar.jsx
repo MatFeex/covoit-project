@@ -1,12 +1,12 @@
 import "./navbar.scss";
-import { useAuth } from "../../hooks/useAuth";
+import {useAuth} from "../../hooks/useAuth";
 import React from "react";
-import { Link } from "react-router-dom";
-import { navbarToggler } from "../../../assets/allAssets";
-import { checkValidity } from "../../api/RESTApi";
+import {Link} from "react-router-dom";
+import {navbarToggler} from "../../../assets/allAssets";
+import {checkValidity} from "../../context/AuthContext";
 
 function Navbar() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   const redirectToUserProfil = () => {
 
@@ -45,7 +45,7 @@ function Navbar() {
             </li>
           </ul>
           <div>
-            {user && checkValidity(user) ? (
+            {user && checkValidity(token) ? (
               <div className="dropdown">
                 <a
                   className="nav-link dropdown-toggle"

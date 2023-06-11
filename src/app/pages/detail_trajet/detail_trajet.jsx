@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router";
-import { separateurTrajet } from "../../../assets/allAssets";
-import { checkValidity, getCourse, getUser } from "../../api/RESTApi";
-import { useAuth } from "../../hooks/useAuth";
-import { Link } from "react-router-dom";
-import imageMaps from "../../../assets/maps.png";
-import { getReadableDate, getReadableTime } from "../../utils/utils";
-import createPalette from "@mui/material/styles/createPalette";
+import React, {useEffect, useState} from "react";
+import {Navigate, useParams} from "react-router";
+import {separateurTrajet} from "../../../assets/allAssets";
+import {getCourse, getUser} from "../../api/RESTApi";
+import {useAuth} from "../../hooks/useAuth";
+import {Link} from "react-router-dom";
+import {getReadableDate, getReadableTime} from "../../utils/utils";
+import {checkValidity} from "../../context/AuthContext";
 
 export default function Detail_Trajet() {
   const [trajet, setTrajet] = useState("");
@@ -15,11 +14,9 @@ export default function Detail_Trajet() {
   const [durationSec, setDurationSec] = useState("");
   const [arrivalTime, setArrivalTime] = useState("");
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
-  if (!user || !checkValidity(user)) {
-    return <Navigate to="/login" />;
-  }
+  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
 
   if (!id) {
     return <Navigate to="/error" />;
@@ -46,7 +43,7 @@ export default function Detail_Trajet() {
     service.getDistanceMatrix(request, (response, status) => {
       if (status === google.maps.DistanceMatrixStatus.OK) {
         const elementStatus = response.rows[0].elements[0]
-        if (elementStatus.status == google.maps.DistanceMatrixStatus.OK) {
+        if (elementStatus.status === google.maps.DistanceMatrixStatus.OK) {
           const durationSec = response.rows[0].elements[0].duration.value;
           const duration = response.rows[0].elements[0].duration.text;
           const arrivalTime = calculateArrival(startDate, durationSec);
@@ -96,20 +93,20 @@ export default function Detail_Trajet() {
       travelMode: 'DRIVING'
     };
     directionsService.route(request, function(result, status) {
-      if (status == 'OK') {
+      if (status === 'OK') {
         directionsRenderer.setDirections(result);
       }
     });
   };
 
   useEffect(() => {
-    getCourse(id, user.token)
+    getCourse(id, token.token)
       .then((courseResp) => {
         setTrajet(courseResp);
         const startAddress = courseResp.start;
         const endAddress = courseResp.end;
         const startDate = courseResp.date;
-        getUser(courseResp.user, user.token)
+        getUser(courseResp.user, token.token)
           .then((userResp) => {
             setPilot(userResp.user);
             loadGoogleMapsScript(startAddress, endAddress, startDate); 

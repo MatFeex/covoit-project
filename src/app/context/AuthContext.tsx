@@ -1,16 +1,20 @@
 import React, {createContext, FC, ReactNode, useEffect, useState} from 'react';
-import {User} from "../api/RESTApi";
+import {getConnectedUser, Token, User} from "../api/RESTApi";
 
 export interface AuthContextProps {
+    token: Token | null;
     user: User | null;
-    login: (user: User) => void;
+    login: (user: Token) => void;
     logout: () => void;
+    updateUser: () => void;
 }
 
 export const AuthContext = createContext<AuthContextProps>({
+    token: null,
     user: null,
     login: () => {},
-    logout: () => {}
+    logout: () => {},
+    updateUser: () => {}
 });
 
 interface AuthProviderProps {
@@ -18,27 +22,35 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(() => {
-        const storedUser = localStorage.getItem('user');
+    const [token, setToken] = useState<Token | null>(() => {
+        const storedUser = localStorage.getItem('token');
         return storedUser ? JSON.parse(storedUser) : null;
     });
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        if(user) localStorage.setItem('user', JSON.stringify(user));
-    }, [user]);
-
-    const login = (user: User) => {
-        setUser(user);
-    }
+        if(token) {
+            localStorage.setItem('token', JSON.stringify(token));
+            getConnectedUser(token.token).then(user => setUser(user))
+        }
+    }, [token]);
+    const login = (token: Token) => setToken(token);
 
     const logout = () => {
-        setUser(null);
-        localStorage.removeItem('user');
+        setToken(null);
+        localStorage.removeItem('token');
+    }
+    const updateUser = () => {
+        if(token) getConnectedUser(token.token).then(user => setUser(user))
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, token, login, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );
+}
+
+export function checkValidity(token: Token) {
+    return new Date(token.expiry) > new Date();
 }

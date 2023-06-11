@@ -1,24 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router";
-import { Link } from "react-router-dom";
-import {
-  checkValidity,
-  getConnectedUser,
-  getNotesWithUser,
-  getUser,
-  updateUserInfo,
-  updateUserPassword,
-} from "../../api/RESTApi";
-import { useAuth } from "../../hooks/useAuth";
-<<<<<<< Updated upstream
-import useInfo from "../../hooks/useInfo";
-=======
-import { getReadableDate } from "../../utils/utils";
->>>>>>> Stashed changes
+import React, {useEffect, useState} from "react";
+import {Navigate} from "react-router";
+import {Link} from "react-router-dom";
+import {getNotesWithUser, updateUserInfo, updateUserPassword,} from "../../api/RESTApi";
+import {useAuth} from "../../hooks/useAuth";
 import "./modif_profil.scss";
+import useInfo from "../../hooks/useInfo";
+import {checkValidity} from "../../context/AuthContext";
 
 export default function ModifProfil() {
-  const { user } = useAuth();
+  const { user, token, updateUser } = useAuth();
 
   const {
     setOpenBackdrop,
@@ -28,7 +18,6 @@ export default function ModifProfil() {
     setTextSuccess,
   } = useInfo();
 
-  const [conUser, setConUser] = useState();
   const [notesGot, setNotesGot] = useState();
 
   const [loading, setLoading] = useState(false);
@@ -43,18 +32,11 @@ export default function ModifProfil() {
 
   const [passwordValidation, setPasswordValidation] = useState("");
 
-  if (!user || !checkValidity(user)) {
-    return <Navigate to="/login" />;
-  }
+  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
 
   useEffect(() => {
-    getConnectedUser(user.token).then((resp) => {
-      console.log(resp);
-      setConUser(resp);
-
-      getNotesWithUser(user.token, resp.id).then((resp) => {
-        setNotesGot(resp);
-      });
+    getNotesWithUser(token.token, user.id).then((resp) => {
+      setNotesGot(resp);
     });
   }, []);
 
@@ -72,19 +54,17 @@ export default function ModifProfil() {
       return;
     }
     updateUserInfo(
-      newFName ? newFName : conUser.first_name,
-      newLName ? newLName : conUser.last_name,
-      newEmail ? newEmail : conUser.email,
+      newFName ? newFName : user.first_name,
+      newLName ? newLName : user.last_name,
+      newEmail ? newEmail : user.email,
       passwordValidation,
-      user.token
+      token.token
     ).then((resp) => {
       setLoading(false);
       setTextSuccess("Changements effectués !");
       setOpenSuccess(true);
-      getConnectedUser(user.token).then((resp) => {
-        console.log(resp);
-        setConUser(resp);
-      });
+      updateUser();
+      console.log(user)
     });
   };
 
@@ -100,7 +80,7 @@ export default function ModifProfil() {
       console.log(oldPassword);
       console.log(newPassword1);
 
-      updateUserPassword(conUser.email, oldPassword, newPassword1, user.token)
+      updateUserPassword(user.email, oldPassword, newPassword1, token.token)
         .then((resp) => {
           if (resp) {
             setTextSuccess("Mot de passe modifié avec succès !");
@@ -138,11 +118,11 @@ export default function ModifProfil() {
         <div className="card shadow">
           <div className="card-body">
             <h4 className="card-title">Informations générales</h4>
-            {conUser ? (
+            {user ? (
               <div className="d-block">
-                <div className="my-2">Prénom : {conUser.first_name}</div>
-                <div className="my-2">Nom : {conUser.last_name}</div>
-                <div className="my-2">Adresse email : {conUser.email}</div>
+                <div className="my-2">Prénom : {user.first_name}</div>
+                <div className="my-2">Nom : {user.last_name}</div>
+                <div className="my-2">Adresse email : {user.email}</div>
               </div>
             ) : (
             <div className="d-block placeholder-glow">

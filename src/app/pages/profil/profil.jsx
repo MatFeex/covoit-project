@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Navigate, useLocation, useNavigate, useParams } from "react-router";
-import { Link } from "react-router-dom";
-import { checkValidity, getNotesWithUser, getUser } from "../../api/RESTApi";
-import { useAuth } from "../../hooks/useAuth";
-import { getReadableDate } from "../../utils/utils";
+import React, {useEffect, useState} from "react";
+import {Navigate, useLocation, useParams} from "react-router";
+import {Link} from "react-router-dom";
+import {getNotesWithUser, getUser} from "../../api/RESTApi";
+import {useAuth} from "../../hooks/useAuth";
+import {getReadableDate} from "../../utils/utils";
 import "./profil.scss";
+import {checkValidity} from "../../context/AuthContext";
 
 export default function Profil() {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const location = useLocation();
 
-  if (!user || !checkValidity(user)) {
-    return <Navigate to="/login" />;
-  }
+  if (!user || !checkValidity(token)) return <Navigate to="/login" />;
 
   const [notesGot, setNotesGot] = useState();
   // const [notesGiven, setNotesGiven] = useState<any[]>([]);
@@ -24,10 +23,10 @@ export default function Profil() {
     // console.log(id);
 
     if (id) {
-      getNotesWithUser(user.token, id).then((resp) => {
+      getNotesWithUser(token.token, id).then((resp) => {
         setNotesGot(resp);
       });
-      getUser(id, user.token).then((resp) => {
+      getUser(id, token.token).then((resp) => {
         if (resp) {
           setDUser(resp.user);
           // console.log(resp.user);

@@ -1,14 +1,12 @@
 import "./accueil.scss";
 
-import { voiture, addIcon, searchIcon } from "../../../assets/allAssets";
-import { Link } from "react-router-dom";
+import {addIcon, searchIcon, voiture} from "../../../assets/allAssets";
+import {Link} from "react-router-dom";
 import React from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { environment } from "../../api/environment";
-import { getCourse, getUser } from "../../api/RESTApi";
+import {useAuth} from "../../hooks/useAuth";
 
 export default function Accueil() {
-  const { user } = useAuth();
+  const { token } = useAuth();
 
   return (
     <div className="Accueil">

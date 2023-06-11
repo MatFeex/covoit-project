@@ -10,7 +10,6 @@ export default function PaginationList({ items, exp }){
     const maxPage = () => Math.ceil(items.length / nPerPage);
 
     const changePage = (page) => {
-        console.log("change page", page)
         if(page < 1) return;
         if(page > maxPage()) setPage(maxPage());
         else setPage(page);
@@ -21,7 +20,7 @@ export default function PaginationList({ items, exp }){
         if(page === 1 || maxPage() <= 3) setListPageBtn(Array.from(Array(Math.min(3, maxPage())).keys(), x => x + 1));
         else if(page === maxPage()) setListPageBtn([page-2, page-1, page]);
         else setListPageBtn([page-1, page, page+1]);
-    }, [page, nPerPage]);
+    }, [page, nPerPage, items]);
 
     const updateNPerPage = (e) => setNPerPage(e.target.value);
     useEffect(() => changePage(page), [nPerPage]);
@@ -29,24 +28,35 @@ export default function PaginationList({ items, exp }){
 
     return (
         <>
-            <nav aria-label="Page navigation example">
-                <ul className="pagination">
-                    <li className={"page-item"+(page === 1 && ' disabled')}><a className="page-link" onClick={() => changePage(page-1)}>Previous</a></li>
-                    {
-                        listPageBtn.map((p) => (
-                            <li className={"page-item"+(p === page && " active") } id={"pageBtn"+p}><a className="page-link" onClick={() => changePage(p)}>{p}</a></li>
-                        ))
-                    }
-                    <li className={"page-item"+(page === maxPage() && ' disabled')}><a className="page-link" onClick={() => changePage(page+1)}>Next</a></li>
-                </ul>
-            </nav>
-            <select className="custom-select" id="selectNPerPage" onChange={(e) => updateNPerPage(e)}>
-                {
-                    [1, 3, 5].map((n) => (
-                        <option value={n} selected={nPerPage === n}>{n}</option>
-                    ))
-                }
-            </select>
+
+                <nav aria-label="Page navigation example">
+                    <ul className="pagination">
+                        <li className={"page-item" + (page === 1 && ' disabled')}>
+                            <a className="page-link" onClick={() => changePage(page - 1)} aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                        </li>
+                        {
+                            listPageBtn.map((p) => (
+                                <li className={"page-item" + (p === page && " active")} id={"pageBtn" + p}>
+                                    <a className="page-link" onClick={() => changePage(p)}>{p}</a>
+                                </li>
+                            ))
+                        }
+                        <li className={"page-item" + (page === maxPage() && ' disabled')}>
+                            <a className="page-link" onClick={() => changePage(page + 1)} aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div className="input-group mb-3">
+                    <label className="input-group-text" htmlFor="selectNPerPage">Nombre d'élement par page</label>
+                    <select className="form-select form-select-sm" id="selectNPerPage" onChange={(e) => updateNPerPage(e)}>
+                        {
+                            [1, 3, 5].map((n) => (
+                                <option value={n} selected={nPerPage === n}>{n}</option>
+                            ))
+                        }
+                    </select>
+                </div>
             {currentItems.map((course) => exp(course))}
         </>
     )
