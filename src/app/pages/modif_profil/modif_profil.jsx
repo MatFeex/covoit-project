@@ -10,7 +10,11 @@ import {
   updateUserPassword,
 } from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
+<<<<<<< Updated upstream
 import useInfo from "../../hooks/useInfo";
+=======
+import { getReadableDate } from "../../utils/utils";
+>>>>>>> Stashed changes
 import "./modif_profil.scss";
 
 export default function ModifProfil() {
@@ -25,6 +29,7 @@ export default function ModifProfil() {
   } = useInfo();
 
   const [conUser, setConUser] = useState();
+  const [notesGot, setNotesGot] = useState();
 
   const [loading, setLoading] = useState(false);
 
@@ -46,6 +51,10 @@ export default function ModifProfil() {
     getConnectedUser(user.token).then((resp) => {
       console.log(resp);
       setConUser(resp);
+
+      getNotesWithUser(user.token, resp.id).then((resp) => {
+        setNotesGot(resp);
+      });
     });
   }, []);
 
@@ -136,15 +145,21 @@ export default function ModifProfil() {
                 <div className="my-2">Adresse email : {conUser.email}</div>
               </div>
             ) : (
-              <div className="d-block placeholder-glow">
-                <ul className="list-group list-group-flush">
-                  <li className="list-group-item placeholder col-5 my-2"></li>
-                  <li className="list-group-item placeholder col-3 my-2"></li>
-                  <li className="list-group-item placeholder col-4 my-2"></li>
-                </ul>
+            <div className="d-block placeholder-glow">
+              <div className="list-group-item my-2">
+                <span>Prénom : </span>
+                <span className="placeholder col-4"></span>
               </div>
+              <div className="list-group-item my-2">
+                <span>Nom : </span>
+                <span className="placeholder col-4"></span>
+              </div>
+              <div className="list-group-item my-2">
+                <span>Adresse email : </span>
+                <span className="placeholder col-4"></span>
+              </div>
+            </div>
             )}
-
             <div>
               <div className="mt-2">
                 <a
@@ -334,6 +349,70 @@ export default function ModifProfil() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        <div className="d-bloc">
+          <div>
+            {notesGot ? (
+              <div className="accordion mt-4" id="accordionAvis">
+                <div className="accordion-item">
+                  <h2 className="accordion-header">
+                    <button
+                      className="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseAvis"
+                      aria-expanded="true"
+                      aria-controls="collapseAvis"
+                    >
+                      {(
+                        notesGot.reduce((moy, note) => {
+                          console.log(note.note);
+                          return moy + note.note;
+                        }, 0) / notesGot.length
+                      ).toFixed(1)}{" "}
+                      / 10 - {notesGot.length} avis
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseAvis"
+                    className="accordion-collapse collapse in"
+                    data-bs-parent="#accordionAvis"
+                  >
+                    <div className="d-bloc">
+                      {notesGot &&
+                        notesGot.map((note) => {
+                          return (
+                            <div className="m-3 p-2 rounded bg-light">
+                              <div className="fw-semibold">
+                                <Link to={`/profil/${note.rater.id}`}>
+                                  {note.rater.first_name} {note.rater.last_name}
+                                </Link>{" "}
+                                - {note.note}/10
+                              </div>
+                              <div className="">
+                                {note.comment ? (
+                                  note.comment
+                                ) : (
+                                  <i>Pas d'avis laissé</i>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="accordion mt-4">
+                <div className="accordion-item">
+                  <h2 className="accordion-header">
+                    <div className="accordion-button collapsed">Aucun avis</div>
+                  </h2>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

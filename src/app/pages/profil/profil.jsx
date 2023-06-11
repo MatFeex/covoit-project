@@ -15,7 +15,7 @@ export default function Profil() {
     return <Navigate to="/login" />;
   }
 
-  const [notesGot, setNotesGot] = useState([]);
+  const [notesGot, setNotesGot] = useState();
   // const [notesGiven, setNotesGiven] = useState<any[]>([]);
   const [duser, setDUser] = useState("");
   const [profilError, setProfilError] = useState(false);
@@ -84,10 +84,6 @@ export default function Profil() {
                         <div className="d-bloc">
                           {notesGot &&
                             notesGot.map((note) => {
-                              let comment = note.comment
-                                ? note.comment
-                                : "pas de commentaire";
-
                               return (
                                 <div className="m-3 p-2 rounded bg-light">
                                   <div className="fw-semibold">
@@ -112,11 +108,11 @@ export default function Profil() {
                     </div>
                   </div>
                 ) : (
-                  <div className="accordion mt-4">
+                  <div className="accordion mt-4 bg-white">
                     <div className="accordion-item">
                       <h2 className="accordion-header">
                         <div className="accordion-button collapsed">
-                          Aucun d'avis
+                          Aucun avis
                         </div>
                       </h2>
                     </div>

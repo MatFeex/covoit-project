@@ -126,9 +126,9 @@ export default function Detail_Trajet() {
   
 
   return (
-    <div className="AjoutTrajet">
+    <div className="mb-4">
       {pilot ? ( // pas placeholder
-        <div className="container w-50">
+        <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
           <h2 className="mt-4">
             Trajet du {getReadableDate(trajet.date.split("T")[0])}
           </h2>
@@ -182,9 +182,9 @@ export default function Detail_Trajet() {
                 </Link>
               </li>
             </ul>
-            <div className="card-body text-center">
-              <a className="btn btn-outline-primary m-2">
-                Choisir cette course
+            <div className="card-body">
+              <a className="btn btn-primary">
+                Participer à cette course
               </a>
             </div>
           </div>

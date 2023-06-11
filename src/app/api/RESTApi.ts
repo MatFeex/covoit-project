@@ -1,5 +1,6 @@
 import { environment } from "./environment";
 import axios from "axios";
+import { env } from "yargs";
 
 axios.defaults.headers.common = {
   Accept: "application/json",
@@ -261,4 +262,46 @@ export function checkValidity(user: any) {
   } else {
     return true;
   }
+}
+
+export async function updateUserInfo(newFName: string, newLName: string, newEmail: string, password: string, token: string) {
+
+  // URL: PUT /api/user/
+  // Request body (update a user but not the password):
+  // { "first_name": "John 2", "last_name": "Doe 2", "email": "john.doe2@email.fr" "password":"admin123" }
+
+  return axios.put(`${environment.api.host}/api/user/`, {
+    first_name: newFName,
+    last_name: newLName,
+    email: newEmail,
+    password: password
+  }, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  }).then((resp) => {
+    console.log(resp);
+    return resp.data;
+  }).catch((error) => {
+    console.log(error);
+    return null;
+  })
+}
+
+export async function updateUserPassword(email: string, oldpassword: string, newpassword: string, token: string) {
+  return axios.patch(`${environment.api.host}/api/user/`, {
+    email: email,
+    password: oldpassword,
+    new_password: newpassword
+  }, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  }).then((resp) => {
+    console.log(resp);
+    return resp.data;
+  }).catch((error) => {
+    console.log(error);
+    return null;
+  })
 }
