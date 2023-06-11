@@ -47,7 +47,7 @@ export async function logout(token: string) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     )
@@ -95,7 +95,7 @@ export async function getCourse(id: string, token: string) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
     .then((resp) => {
@@ -112,7 +112,7 @@ export async function getUser(id: string, token: string) {
     .get(`${environment.api.host}/api/user/${id}/`, {
       method: "GET",
       headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
       },
     })
     .then((resp) => {
@@ -128,7 +128,7 @@ export async function getConnectedUser(token: string) : Promise<User | null> {
   return axios
     .get(`${environment.api.host}/api/user/`, {
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
     .then((resp) => {
@@ -165,7 +165,7 @@ export async function addCourse(
       },
       {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     )
@@ -184,7 +184,7 @@ export async function getNotesGiven(token: string, id: string) {
     .get(`${environment.api.host}/api/notes/user/${id}/`, {
       method: "GET",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
     .then((resp) => {
@@ -202,7 +202,7 @@ export async function getNotesGot(token: string, id: string) {
     .get(`${environment.api.host}/api/notes/user/${id}/`, {
       method: "GET",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       params: {
         user: "rated",
@@ -222,7 +222,7 @@ export async function getNotesWithUser(token: string, id: number) {
     .get(`${environment.api.host}/api/notes/user/${id}/`, {
       method: "GET",
       headers: {
-        Authorization: `Token ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       params: {
         user: "rated",
@@ -266,7 +266,7 @@ export async function updateUserInfo(newFName: string, newLName: string, newEmai
     password: password
   }, {
     headers: {
-      Authorization: `Token ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   }).then((resp) => {
     console.log(resp);
@@ -284,7 +284,7 @@ export async function updateUserPassword(email: string, oldpassword: string, new
     new_password: newpassword
   }, {
     headers: {
-      Authorization: `Token ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   }).then((resp) => {
     console.log(resp);
