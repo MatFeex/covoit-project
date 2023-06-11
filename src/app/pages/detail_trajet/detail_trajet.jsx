@@ -15,6 +15,7 @@ export default function Detail_Trajet() {
   const [arrivalTime, setArrivalTime] = useState("");
   const { id } = useParams();
   const { user } = useAuth();
+ 
 
   if (!user || !checkValidity(user)) {
     return <Navigate to="/login" />;
@@ -27,11 +28,12 @@ export default function Detail_Trajet() {
   const loadGoogleMapsScript = (startAddress, endAddress, startDate) => {
     
     const googleMapsScript = document.createElement("script");
-    googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDDPYxGvkeIqQyXfZZ-8AihV71PMMCHncs&libraries=places`;
+    googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDDPYxGvkeIqQyXfZZ-8AihV71PMMCHncs&libraries=routes`;
     googleMapsScript.async = true;
     window.document.body.appendChild(googleMapsScript);
     googleMapsScript.onload = () => calculateDuration(startAddress, endAddress, startDate);
   };
+
 
   const calculateDuration = (startAddress, endAddress, startDate) => {
     const service = new google.maps.DistanceMatrixService();
@@ -41,21 +43,21 @@ export default function Detail_Trajet() {
       destinations: [endAddress],
       travelMode: google.maps.TravelMode.DRIVING,
     };
-  
+         
     service.getDistanceMatrix(request, (response, status) => {
       if (status === google.maps.DistanceMatrixStatus.OK) {
         const durationSec = response.rows[0].elements[0].duration.value;
-        console.log(durationSec);
         const duration = response.rows[0].elements[0].duration.text;
         const arrivalTime = calculateArrival(startDate, durationSec);
         setDurationSec(durationSec);
         setDuration(duration);
         setArrivalTime(arrivalTime);
-        console.log(duration);
       } else {
         console.error("Error calculating duration:", status);
       }
-    });
+      initMap(startAddress,endAddress);
+    }); 
+
   };
 
   const calculateArrival = (startDate, durationSec) => {
@@ -63,14 +65,39 @@ export default function Detail_Trajet() {
     const arrivalDate = new Date(departureDate.getTime() + durationSec * 1000);
     return arrivalDate;
   };
-
   
+
+  const initMap=(startAddress,endAddress)=> {
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+    const directionsService = new google.maps.DirectionsService();
+    
+    const center = new google.maps.LatLng(0, 0);
+    const mapOptions = {
+      zoom:8,
+      center: center 
+    }
+    const mapElement = document.getElementById('map');
+    const map = new google.maps.Map(mapElement, mapOptions);
+    directionsRenderer.setMap(map);
+
+    console.log(typeof map);
+
+    const request = {
+      origin: startAddress,
+      destination: endAddress,
+      travelMode: 'DRIVING'
+    };
+    directionsService.route(request, function(result, status) {
+      if (status == 'OK') {
+        directionsRenderer.setDirections(result);
+      }
+    });
+  };
 
   useEffect(() => {
     getCourse(id, user.token)
       .then((courseResp) => {
         setTrajet(courseResp);
-        //console.log(courseResp);
         const startAddress = courseResp.start;
         const endAddress = courseResp.end;
         const startDate = courseResp.date;
@@ -78,6 +105,7 @@ export default function Detail_Trajet() {
           .then((userResp) => {
             setPilot(userResp.user);
             loadGoogleMapsScript(startAddress, endAddress, startDate); 
+            
           })
           .catch((error) => {
             console.log(error);
@@ -87,6 +115,8 @@ export default function Detail_Trajet() {
         console.log(error);
       });
   }, []);
+
+
   
   
 
@@ -112,7 +142,7 @@ export default function Detail_Trajet() {
                   </div>
                 </div>
                 <div className="card my-2">
-                  <img src={imageMaps}></img>
+                  <div id="map" style={{ width: "100%", height: "400px" }}></div>
                 </div>
                 <div className="d-bloc">
                   <div>
@@ -172,5 +202,9 @@ export default function Detail_Trajet() {
         </div>
       )}
     </div>
+    
   );
+
+
+  
 }
