@@ -1,10 +1,11 @@
 import "./liste_trajet.scss";
-import { Link, Navigate } from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { checkValidity, getCourses } from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
-import { getReadableDate, getReadableTime } from "../../utils/utils";
-import { flecheTrajet, separateurTrajet } from "../../../assets/allAssets";
+import PaginationList from "../../component/PaginationList";
+import {getReadableDate, getReadableTime} from "../../utils/utils";
+import {flecheTrajet} from "../../../assets/allAssets";
 
 function ListeTrajet() {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ function ListeTrajet() {
     let date2 = new Date(date);
     let dateSet = [date2.getFullYear(), date2.getMonth(), date2.getDate()];
 
-    console.log(date == "");
+    console.log(date === "");
 
     courses.map((item) => {
       let date1 = new Date(item.date);
@@ -44,7 +45,7 @@ function ListeTrajet() {
         item.start.toLowerCase().includes(depart.toLowerCase()) &&
         item.end.toLowerCase().includes(arrivee.toLowerCase())
       ) {
-        if (date != "") {
+        if (date !== "") {
           // date entrée
 
           if (
@@ -178,41 +179,32 @@ function ListeTrajet() {
           <div className="container listcourses m-2 flex-grow mb-5">
             {courses ? (
               <div>
-                {displayedCourses.length == 0 && (
+                {displayedCourses.length === 0 ? (
                   <h4 className="m-3">Aucune course trouvée</h4>
-                )}
-                {displayedCourses.map((course) => {
-                  {
-                    let test = new Date(course.date);
-                  }
-                  return (
-                    <div key={course.id} className="trajet mb-3">
-                      <Link
-                        to={`/course/${course.id}`}
-                        className="text-decoration-none link-dark"
-                      >
-                        <div className="card shadow card-course">
-                          <div className="card-body placeholder-glow">
-                            <h5 className="card-title fw-semibold">
-                              Trajet du {getReadableDate(course.date)}
-                            </h5>
-                            <div className="d-flex">
-                              <div className="d-bloc justify-content-start align-items-center mb-2">
-                                <div>
-                                  {course.start}, {getReadableTime(course.date)}
-                                </div>
-                                <div className="m-2 d-flex align-items-end">
-                                  <div className="me-2">{flecheTrajet()}</div>
-                                  <div>{course.end}</div>
-                                </div>
+                ) : <PaginationList items={displayedCourses} exp={(course) => (
+                  <div key={course.id} className="trajet mb-3">
+                    <Link to={`/course/${course.id}`} className="text-decoration-none link-dark">
+                      <div className="card shadow card-course">
+                        <div className="card-body placeholder-glow">
+                          <h5 className="card-title fw-semibold">
+                            Trajet du {getReadableDate(course.date)}
+                          </h5>
+                          <div className="d-flex">
+                            <div className="d-bloc justify-content-start align-items-center mb-2">
+                              <div>
+                                {course.start}, {getReadableTime(course.date)}
+                              </div>
+                              <div className="m-2 d-flex align-items-end">
+                                <div className="me-2">{flecheTrajet()}</div>
+                                <div>{course.end}</div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </Link>
-                    </div>
-                  );
-                })}
+                      </div>
+                    </Link>
+                  </div>
+                )}/>}
               </div>
             ) : (
               <p>Chargement des trajets...</p>
