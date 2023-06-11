@@ -161,7 +161,7 @@ export default function Detail_Trajet() {
                 </div>
               </li>
               <li className="list-group-item">
-                Nombre de passagers : {trajet.passenger_count}
+                Nombre de passagers : {trajet.vehicle_seats}
               </li>
               <li className="list-group-item d-bloc">
                 <div>Détail du véhicule :</div>
