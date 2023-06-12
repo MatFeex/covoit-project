@@ -36,7 +36,7 @@ function ListMesTrajets() {
 
 					<div className="d-flex flex-row">
 						<div className="container listcourses m-2 flex-grow mb-5">
-							{coursesAsDriver ? (
+							{coursesAsDriver.length !== 0 ? (
 								<div>
 									<p className="fw-semibold">Je suis conducteur</p>
 									<PaginationList
@@ -70,7 +70,7 @@ function ListMesTrajets() {
 							)}
 						</div>
 						<div className="container listcourses m-2 flex-grow mb-5">
-							{coursesAsPassenger ? (
+							{coursesAsPassenger.length !== 0 ? (
 								<div>
 									<p className="fw-semibold">Je suis passager</p>
 									<PaginationList
