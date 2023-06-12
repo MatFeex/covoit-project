@@ -347,8 +347,24 @@ export async function becomePassenger(id: string, token: String) {
     },
     {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
     }
   );
+}
+
+export async function deleteCourse(id: string, token: string) {
+  return axios
+    .delete(
+      `${environment.api.host}/api/courses/${id}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((resp) => {
+      console.log(resp);
+      return resp;
+    });
 }

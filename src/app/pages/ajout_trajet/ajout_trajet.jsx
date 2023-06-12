@@ -1,13 +1,17 @@
 import "./ajout_trajet.scss";
-import React, {useEffect, useRef, useState} from "react";
-import {useAuth} from "../../hooks/useAuth";
-import {Navigate} from "react-router-dom";
-import {addCourse} from "../../api/RESTApi";
-import {canAcces} from "../../context/AuthContext";
+import React, { useEffect, useRef, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { Navigate } from "react-router-dom";
+import { addCourse } from "../../api/RESTApi";
+import { canAcces } from "../../context/AuthContext";
+import useInfo from "../../hooks/useInfo";
 
 export default function AjoutTrajet() {
   const { token } = useAuth();
-  if(!canAcces()) return <Navigate to={"/login"} />
+  if (!canAcces()) return <Navigate to={"/login"} />;
+
+  const { setOpenError, setTextError, setOpenSuccess, setTextSuccess } =
+    useInfo();
 
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
@@ -26,7 +30,7 @@ export default function AjoutTrajet() {
     let dateSplitted = e.split("-");
     console.log(date);
     date.setFullYear(parseInt(dateSplitted[0]));
-    date.setMonth(parseInt(dateSplitted[1]));
+    date.setMonth(parseInt(dateSplitted[1] - 1));
     date.setDate(parseInt(dateSplitted[2]));
     console.log(date);
   }
@@ -39,7 +43,27 @@ export default function AjoutTrajet() {
     console.log(date);
   }
 
-  
+  function addCourseBtn() {
+    setLoading(true);
+
+    addCourse(
+      start,
+      end,
+      brand,
+      model,
+      seats,
+      date.toISOString(),
+      "En attente de passagers",
+      token.token
+    ).then((resp) => {
+      console.log(resp);
+      setLoading(false);
+      setTextSuccess("Course ajoutée !");
+      setOpenSuccess(true);
+      setRedirect(true);
+    });
+  }
+
   useEffect(() => {
     const loadGoogleMapsScript = () => {
       const googleMapsScript = document.createElement("script");
@@ -48,11 +72,15 @@ export default function AjoutTrajet() {
       window.document.body.appendChild(googleMapsScript);
       googleMapsScript.onload = initAutocomplete;
     };
-  
+
     const initAutocomplete = () => {
-      const startAutocomplete = new google.maps.places.Autocomplete(startInputRef.current);
-      const endAutocomplete = new google.maps.places.Autocomplete(endInputRef.current);
-  
+      const startAutocomplete = new google.maps.places.Autocomplete(
+        startInputRef.current
+      );
+      const endAutocomplete = new google.maps.places.Autocomplete(
+        endInputRef.current
+      );
+
       startAutocomplete.addListener("place_changed", () => {
         const place = startAutocomplete.getPlace();
         if (!place.geometry || !place.formatted_address) {
@@ -61,7 +89,7 @@ export default function AjoutTrajet() {
         }
         setStart(place.formatted_address);
       });
-  
+
       endAutocomplete.addListener("place_changed", () => {
         const place = endAutocomplete.getPlace();
         if (!place.geometry || !place.formatted_address) {
@@ -71,10 +99,9 @@ export default function AjoutTrajet() {
         setEnd(place.formatted_address);
       });
     };
-  
+
     loadGoogleMapsScript();
   }, []);
-  
 
   return (
     <div className="AjoutTrajet">
@@ -83,19 +110,13 @@ export default function AjoutTrajet() {
         <form
           className="card shadow"
           onSubmit={(e) => {
-            e.preventDefault()
+            e.preventDefault();
             // console.log(`${start} ${end} ${brand} ${model} ${seats} ${date.toISOString()},${user.token}`);
 
-            setLoading(true);
-
-            addCourse(start, end, brand, model, seats, date.toISOString(), "En attente de passagers", token.token).then((resp) => {
-              console.log(resp);
-              setLoading(false);
-              setRedirect(true);
-            });
+            addCourseBtn();
           }}
         >
-          {redirect && <Navigate to="/"/>}
+          {redirect && <Navigate to="/" />}
           <div className="card-body">
             <h4>Détail de la course :</h4>
             <div className="form-label mb-3">

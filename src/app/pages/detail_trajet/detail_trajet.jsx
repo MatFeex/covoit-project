@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router";
+import { Navigate, redirect, useParams } from "react-router";
 import { separateurTrajet } from "../../../assets/allAssets";
 import {
   getCourse,
   getUser,
   becomePassenger,
   getConnectedUser,
+  deleteCourse,
 } from "../../api/RESTApi";
 import { useAuth } from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
@@ -22,8 +23,8 @@ export default function Detail_Trajet() {
   const { id } = useParams();
 
   const [conUser, setConUser] = useState();
-
   const [loading, setLoading] = useState(false);
+  const [redirectList, setRedirectList] = useState(false);
 
   const { token } = useAuth();
 
@@ -159,11 +160,21 @@ export default function Detail_Trajet() {
   }
 
   function deleteMyCourse() {
-    
+    setLoading(true);
+    deleteCourse(trajet.id, token.token).then(resp => {
+      console.log(resp);
+      setLoading(false);
+      setTextSuccess("Course supprimée !")
+      setOpenSuccess(true);
+      setRedirectList(true);
+    }).catch(err => {
+      console.log(err);
+    })
   }
 
   return (
     <div className="mb-4">
+      {redirectList && <Navigate to="/list" />}
       {pilot ? ( // pas placeholder
         <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
           <h2 className="mt-4">
