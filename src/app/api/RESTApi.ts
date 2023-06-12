@@ -27,12 +27,6 @@ export async function getToken(
     .post(
       `${environment.api.host}/api/user/login/`,
       { email: user, password: password },
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
     )
     .then((resp) => {
       return resp.data;
@@ -49,7 +43,6 @@ export async function logout(token: string) {
       {},
       {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }
@@ -102,7 +95,6 @@ export async function getCourse(id: string, token: string) {
     .get(`${environment.api.host}/api/courses/${id}/`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     })
@@ -111,6 +103,25 @@ export async function getCourse(id: string, token: string) {
     })
     .catch((error) => {
       console.log(error.response);
+      return null;
+    });
+}
+
+export async function getUserCourses(status: string, token: string) {
+  return axios
+    .get(`${environment.api.host}/api/courses-user/`, {
+      params: {
+        status: status
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((resp) => {
+      return resp.data;
+    })
+    .catch((error) => {
+      console.log(error);
       return null;
     });
 }

@@ -6,6 +6,7 @@ import Login from "./pages/login/login";
 import AjoutTrajet from "./pages/ajout_trajet/ajout_trajet";
 import ListeTrajet from "./pages/liste_trajet/liste_trajet";
 import Erreur from "./pages/erreur/erreur";
+import ListMesTrajets from "./pages/liste_mes_trajets/liste_mes_trajet";
 
 import "bootstrap/js/dist/collapse";
 import "bootstrap/js/dist/dropdown";
@@ -32,6 +33,7 @@ export default function App() {
 
 						<Route path="/add" element={<AjoutTrajet />} />
 						<Route path="/list" element={<ListeTrajet />} />
+						<Route path="/my-list" element={<ListMesTrajets />} />
 						<Route path="/course/:id" element={<Detail_Trajet />} />
 						<Route path="/profil/:id" element={<Profil />} />
 						<Route path="/profil" element={<ModifProfil />} />

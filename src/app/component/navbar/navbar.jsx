@@ -61,6 +61,11 @@ function Navbar() {
                     </Link>
                   </li>
                   <li>
+                    <Link className="dropdown-item" to="/my-list">
+                      Mes Courses
+                    </Link>
+                  </li>
+                  <li>
                     <hr className="dropdown-divider" />
                   </li>
                   <li>
