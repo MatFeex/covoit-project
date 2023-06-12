@@ -64,9 +64,22 @@ class PassengerManageSerializer(ModelSerializer):
         fields = ('course',)
         partial = True
 
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+        course = validated_data.get('course')
+        seats_available = course.vehicle_seats - course.passenger_set.count()
+        if seats_available == 0 : 
+            course.status = 'Validée'
+            course.save()       
+        return instance
+
     def validate(self, data):
         user = self.context['request'].user
         course = data['course']
+        seats_available = course.vehicle_seats - course.passenger_set.count()
+
+        # Availability validation
+        if not seats_available > 0 : raise ValidationError("No seats available for this course.")
 
         # Unique passenger validation
         if Passenger.objects.filter(user=user, course=course).exists():
