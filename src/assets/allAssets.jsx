@@ -93,35 +93,24 @@ export const separateurTrajet = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      // width="20.887"
       height="60"
       version="1.1"
-      viewBox="0 0 6.544 25.063"
+      viewBox="0 0 7.767 30.524"
     >
-      <g transform="translate(-36.486 -36.843)">
-        <g
-          stroke="#000"
-          strokeDasharray="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeMiterlimit="4"
-          strokeWidth="1.2"
-        >
-          <path fill="#a40037" d="M39.758 40.364v18.02"></path>
-          <circle
-            cx="39.758"
-            cy="40.115"
-            r="2.272"
+      <g transform="translate(-35.874 -34.937)">
+        <g>
+          <path
             fill="#b20032"
             fillOpacity="1"
-          ></circle>
-          <circle
-            cx="39.758"
-            cy="58.634"
-            r="2.272"
-            fill="#b20032"
-            fillOpacity="1"
-          ></circle>
+            stroke="none"
+            strokeDasharray="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeMiterlimit="4"
+            strokeWidth="3.78"
+            d="M14.678 1.89A12.789 12.789 0 001.89 14.679a12.789 12.789 0 008.066 11.884v62.245a12.789 12.789 0 00-8.066 11.882 12.789 12.789 0 0012.787 12.79 12.789 12.789 0 0012.789-12.79A12.789 12.789 0 0019.4 88.805V26.562a12.789 12.789 0 008.067-11.884A12.789 12.789 0 0014.677 1.89z"
+            transform="matrix(.26458 0 0 .26458 35.874 34.936)"
+          ></path>
         </g>
       </g>
     </svg>
@@ -134,34 +123,20 @@ export const flecheTrajet = () => {
       xmlns="http://www.w3.org/2000/svg"
       width="60"
       version="1.1"
-      viewBox="0 0 24.619 13.536"
+      viewBox="0 0 26.472 15.088"
     >
-      <g
-        stroke="#000"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1"
-        transform="translate(-88.105 -72.98)"
-      >
-        <path
-          fill="none"
-          strokeDasharray="none"
-          strokeMiterlimit="4"
-          d="M91.377 76.251v6.877h18.02"
-        ></path>
-        <circle
-          cx="91.377"
-          cy="76.251"
-          r="2.272"
-          fill="#b20032"
-          fillOpacity="1"
-          strokeDasharray="none"
-          strokeMiterlimit="4"
-        ></circle>
+      <g transform="translate(-90.57 -71.906)">
         <path
           fill="#b20032"
           fillOpacity="1"
-          d="M107.07 80.741v4.775l4.654-2.388z"
+          stroke="none"
+          strokeDasharray="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit="4"
+          strokeWidth="0.4"
+          d="M12.564-2.166A1.276 1.276 0 0011.29-.891v26.81l.01-.15c-1.113 9.354 7.504 16.913 16.752 16.913h51.73v7.125a1.276 1.276 0 001.854 1.136l25.142-12.789a1.276 1.276 0 000-2.273L81.635 23.094a1.276 1.276 0 00-1.854 1.136v7.125H28.05a5.415 5.415 0 01-5.434-5.435V-.89a1.276 1.276 0 00-1.275-1.276z"
+          transform="matrix(.26458 0 0 .26458 88.105 72.98)"
         ></path>
       </g>
     </svg>

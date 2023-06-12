@@ -1,11 +1,17 @@
-import React, {useEffect, useState} from "react";
-import {Navigate, useParams} from "react-router";
-import {separateurTrajet} from "../../../assets/allAssets";
-import {getCourse, getUser} from "../../api/RESTApi";
-import {useAuth} from "../../hooks/useAuth";
-import {Link} from "react-router-dom";
-import {getReadableDate, getReadableTime} from "../../utils/utils";
-import {canAcces} from "../../context/AuthContext";
+import React, { useEffect, useState } from "react";
+import { Navigate, useParams } from "react-router";
+import { separateurTrajet } from "../../../assets/allAssets";
+import {
+  getCourse,
+  getUser,
+  becomePassenger,
+  getConnectedUser,
+} from "../../api/RESTApi";
+import { useAuth } from "../../hooks/useAuth";
+import { Link } from "react-router-dom";
+import { getReadableDate, getReadableTime } from "../../utils/utils";
+import { canAcces } from "../../context/AuthContext";
+import useInfo from "../../hooks/useInfo";
 
 export default function Detail_Trajet() {
   const [trajet, setTrajet] = useState("");
@@ -15,34 +21,42 @@ export default function Detail_Trajet() {
   const [arrivalTime, setArrivalTime] = useState("");
   const { id } = useParams();
 
+  const [conUser, setConUser] = useState();
+
+  const [loading, setLoading] = useState(false);
+
   const { token } = useAuth();
-  if(!canAcces()) return <Navigate to={"/login"} />
+
+  if (!canAcces()) return <Navigate to={"/login"} />;
 
   if (!id) {
     return <Navigate to="/error" />;
   }
 
+  const { setOpenError, setTextError, setOpenSuccess, setTextSuccess } =
+    useInfo();
+
   const loadGoogleMapsScript = (startAddress, endAddress, startDate) => {
-    
     const googleMapsScript = document.createElement("script");
     googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDDPYxGvkeIqQyXfZZ-8AihV71PMMCHncs&libraries=routes`;
     googleMapsScript.async = true;
     window.document.body.appendChild(googleMapsScript);
-    googleMapsScript.onload = () => calculateDuration(startAddress, endAddress, startDate);
+    googleMapsScript.onload = () =>
+      calculateDuration(startAddress, endAddress, startDate);
   };
 
   const calculateDuration = (startAddress, endAddress, startDate) => {
     const service = new google.maps.DistanceMatrixService();
-  
+
     const request = {
       origins: [startAddress],
       destinations: [endAddress],
       travelMode: google.maps.TravelMode.DRIVING,
     };
-  
+
     service.getDistanceMatrix(request, (response, status) => {
       if (status === google.maps.DistanceMatrixStatus.OK) {
-        const elementStatus = response.rows[0].elements[0]
+        const elementStatus = response.rows[0].elements[0];
         if (elementStatus.status === google.maps.DistanceMatrixStatus.OK) {
           const durationSec = response.rows[0].elements[0].duration.value;
           const duration = response.rows[0].elements[0].duration.text;
@@ -50,21 +64,20 @@ export default function Detail_Trajet() {
           setDurationSec(durationSec);
           setDuration(duration);
           setArrivalTime(arrivalTime);
-        } 
-        else {
-        console.error("Error finding addresses:", elementStatus);
-          const duration = "Adresses incorrectes : impossible de fournir la durée du trajet";
+        } else {
+          console.error("Error finding addresses:", elementStatus);
+          const duration =
+            "Adresses incorrectes : impossible de fournir la durée du trajet";
           const arrivalTime = startDate;
           setDuration(duration);
           setArrivalTime(arrivalTime);
         }
-      }
-      else {
+      } else {
         console.error("Error calculating direction:", status);
       }
-      
-      initMap(startAddress,endAddress);
-    }); 
+
+      initMap(startAddress, endAddress);
+    });
   };
 
   const calculateArrival = (startDate, durationSec) => {
@@ -72,28 +85,27 @@ export default function Detail_Trajet() {
     const arrivalDate = new Date(departureDate.getTime() + durationSec * 1000);
     return arrivalDate;
   };
-  
 
-  const initMap=(startAddress,endAddress)=> {
+  const initMap = (startAddress, endAddress) => {
     const directionsRenderer = new google.maps.DirectionsRenderer();
     const directionsService = new google.maps.DirectionsService();
-    
+
     const center = new google.maps.LatLng(0, 0);
     const mapOptions = {
-      zoom:8,
-      center: center 
-    }
-    const mapElement = document.getElementById('map');
+      zoom: 8,
+      center: center,
+    };
+    const mapElement = document.getElementById("map");
     const map = new google.maps.Map(mapElement, mapOptions);
     directionsRenderer.setMap(map);
 
     const request = {
       origin: startAddress,
       destination: endAddress,
-      travelMode: 'DRIVING'
+      travelMode: "DRIVING",
     };
-    directionsService.route(request, function(result, status) {
-      if (status === 'OK') {
+    directionsService.route(request, function (result, status) {
+      if (status === "OK") {
         directionsRenderer.setDirections(result);
       }
     });
@@ -102,6 +114,7 @@ export default function Detail_Trajet() {
   useEffect(() => {
     getCourse(id, token.token)
       .then((courseResp) => {
+        console.log(courseResp);
         setTrajet(courseResp);
         const startAddress = courseResp.start;
         const endAddress = courseResp.end;
@@ -109,7 +122,7 @@ export default function Detail_Trajet() {
         getUser(courseResp.user, token.token)
           .then((userResp) => {
             setPilot(userResp.user);
-            loadGoogleMapsScript(startAddress, endAddress, startDate); 
+            loadGoogleMapsScript(startAddress, endAddress, startDate);
           })
           .catch((error) => {
             console.log(error);
@@ -118,9 +131,36 @@ export default function Detail_Trajet() {
       .catch((error) => {
         console.log(error);
       });
+
+    getConnectedUser(token.token)
+      .then((resp) => {
+        setConUser(resp);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
-  
-  
+
+  function becomePassengerBtn() {
+    setLoading(true);
+    becomePassenger(trajet.id, token.token)
+      .then((resp) => {
+        console.log(resp);
+        setTextSuccess("Vous avez rejoint une course");
+        setOpenSuccess(true);
+        setLoading(false);
+      })
+      .catch((error) => {
+        // console.log(error.response.data.non_field_errors[0]);
+        setTextError(error.response.data.non_field_errors[0]);
+        setOpenError(true);
+        setLoading(false);
+      });
+  }
+
+  function deleteMyCourse() {
+    
+  }
 
   return (
     <div className="mb-4">
@@ -144,20 +184,15 @@ export default function Detail_Trajet() {
                   </div>
                 </div>
                 <div className="card my-2">
-                  <div id="map" style={{ width: "100%", height: "400px" }}></div>
+                  <div
+                    id="map"
+                    style={{ width: "100%", height: "400px" }}
+                  ></div>
                 </div>
                 <div className="d-bloc">
-                  <div>
-                    Heure de départ :{" "}
-                    {getReadableTime(trajet.date)}
-                  </div>
-                  <div>
-                    Temps de trajet : {duration}
-                  </div>
-                  <div>
-                    Heure d'arrivée :{" "}
-                    {getReadableTime(arrivalTime)}
-                  </div>
+                  <div>Heure de départ : {getReadableTime(trajet.date)}</div>
+                  <div>Temps de trajet : {duration}</div>
+                  <div>Heure d'arrivée : {getReadableTime(arrivalTime)}</div>
                 </div>
               </li>
               <li className="list-group-item">
@@ -179,10 +214,36 @@ export default function Detail_Trajet() {
                 </Link>
               </li>
             </ul>
-            <div className="card-body">
-              <a className="btn btn-primary">
-                Participer à cette course
-              </a>
+            <div className="card-body d-flex align-items-center">
+              {conUser.id === pilot.id ? (
+                <div>
+                  <a
+                    className="btn btn-primary disabled"
+                    onClick={() => becomePassengerBtn()}
+                  >
+                    Participer à cette course
+                  </a>
+                  <a
+                    className="btn btn-outline-primary ms-3"
+                    onClick={() => deleteMyCourse()}
+                  >
+                    Supprimer ma course
+                  </a>
+                </div>
+              ) : (
+                <a
+                  className="btn btn-primary"
+                  onClick={() => becomePassengerBtn()}
+                >
+                  Participer à cette course
+                </a>
+              )}
+              {loading && (
+                <div
+                  className="spinner-border text-primary ms-4"
+                  role="status"
+                ></div>
+              )}
             </div>
           </div>
         </div>

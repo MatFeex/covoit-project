@@ -94,7 +94,7 @@ function ListeTrajet() {
   };
 
   return (
-    <div className="Accueil bg-light">
+    <div>
       <div className="container col-xs-10 col-sm-9 col-md-8 col-lg-7 col-xl-6">
         <div className="container">
           <h2 className="p-3 fw-semibold pt-4">Liste des trajets</h2>
@@ -102,7 +102,7 @@ function ListeTrajet() {
         <div className="container d-flex">
           <div className="container m-2 w-50 d-none d-md-block">
             <div className="d-block">
-              <form className="card card-body mb-4">
+              <form className="card shadow card-body mb-4">
                 <label className="col-form-label">
                   <h4>Affiner la recherche :</h4>
                 </label>
@@ -153,7 +153,7 @@ function ListeTrajet() {
                   Annuler
                 </a> */}
               </form>
-              <div className="card card-body">
+              <div className="card shadow card-body">
                 <label className="col-form-label" htmlFor="sortselect">
                   <h4>Trier par :</h4>
                 </label>

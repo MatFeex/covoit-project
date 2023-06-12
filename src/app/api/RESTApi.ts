@@ -1,4 +1,4 @@
-import {environment} from "./environment";
+import { environment } from "./environment";
 import axios from "axios";
 
 axios.defaults.headers.common = {
@@ -7,20 +7,22 @@ axios.defaults.headers.common = {
 };
 
 export interface Token {
-    token: string;
-    expiry: string;
+  token: string;
+  expiry: string;
 }
 
 export interface User {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    date_joined: string;
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  date_joined: string;
 }
 
-export async function getToken( user: string | undefined, password: string | undefined): Promise<Token> {
-
+export async function getToken(
+  user: string | undefined,
+  password: string | undefined
+): Promise<Token> {
   return axios
     .post(
       `${environment.api.host}/api/user/login/`,
@@ -34,7 +36,8 @@ export async function getToken( user: string | undefined, password: string | und
     )
     .then((resp) => {
       return resp.data;
-    }).catch(() => {
+    })
+    .catch(() => {
       return null;
     });
 }
@@ -60,7 +63,12 @@ export async function logout(token: string) {
     });
 }
 
-export async function signinEPF(nom: string, prenom: string, email: string, password: string ){
+export async function signinEPF(
+  nom: string,
+  prenom: string,
+  email: string,
+  password: string
+) {
   return axios
     .post(`${environment.api.host}/api/user/`, {
       first_name: nom,
@@ -112,7 +120,7 @@ export async function getUser(id: string, token: string) {
     .get(`${environment.api.host}/api/user/${id}/`, {
       method: "GET",
       headers: {
-          Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
     .then((resp) => {
@@ -124,7 +132,7 @@ export async function getUser(id: string, token: string) {
     });
 }
 
-export async function getConnectedUser(token: string) : Promise<User | null> {
+export async function getConnectedUser(token: string): Promise<User | null> {
   return axios
     .get(`${environment.api.host}/api/user/`, {
       headers: {
@@ -132,7 +140,7 @@ export async function getConnectedUser(token: string) : Promise<User | null> {
       },
     })
     .then((resp) => {
-        console.log(resp.data)
+      console.log(resp.data);
       return resp.data;
     })
     .catch((error) => {
@@ -172,8 +180,9 @@ export async function addCourse(
     .then((resp) => {
       console.log(resp.data);
       return resp.data;
-    }).catch((err) => {
-      console.log(err)
+    })
+    .catch((err) => {
+      console.log(err);
       return null;
     });
   // console.log(resp);
@@ -253,44 +262,82 @@ export async function getNotesWithUser(token: string, id: number) {
     });
 }
 
-export async function updateUserInfo(newFName: string, newLName: string, newEmail: string, password: string, token: string) {
-
+export async function updateUserInfo(
+  newFName: string,
+  newLName: string,
+  newEmail: string,
+  password: string,
+  token: string
+) {
   // URL: PUT /api/user/
   // Request body (update a user but not the password):
   // { "first_name": "John 2", "last_name": "Doe 2", "email": "john.doe2@email.fr" "password":"admin123" }
 
-  return axios.put(`${environment.api.host}/api/user/`, {
-    first_name: newFName,
-    last_name: newLName,
-    email: newEmail,
-    password: password
-  }, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((resp) => {
-    console.log(resp);
-    return resp.data;
-  }).catch((error) => {
-    console.log(error);
-    return null;
-  })
+  return axios
+    .put(
+      `${environment.api.host}/api/user/`,
+      {
+        first_name: newFName,
+        last_name: newLName,
+        email: newEmail,
+        password: password,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((resp) => {
+      console.log(resp);
+      return resp.data;
+    })
+    .catch((error) => {
+      console.log(error);
+      return null;
+    });
 }
 
-export async function updateUserPassword(email: string, oldpassword: string, newpassword: string, token: string) {
-  return axios.patch(`${environment.api.host}/api/user/`, {
-    email: email,
-    password: oldpassword,
-    new_password: newpassword
-  }, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+export async function updateUserPassword(
+  email: string,
+  oldpassword: string,
+  newpassword: string,
+  token: string
+) {
+  return axios
+    .patch(
+      `${environment.api.host}/api/user/`,
+      {
+        email: email,
+        password: oldpassword,
+        new_password: newpassword,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    .then((resp) => {
+      console.log(resp);
+      return resp.data;
+    })
+    .catch((error) => {
+      console.log(error);
+      return null;
+    });
+}
+
+export async function becomePassenger(id: string, token: String) {
+  return axios.post(
+    `${environment.api.host}/api/passengers-user/`,
+    {
+      course: id,
     },
-  }).then((resp) => {
-    console.log(resp);
-    return resp.data;
-  }).catch((error) => {
-    console.log(error);
-    return null;
-  })
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }
+  );
 }
