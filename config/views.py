@@ -169,8 +169,15 @@ class CoursesUserAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_obj(self, request):
-        try: return Course.objects.filter(user=request.user)
-        except Course.DoesNotExist: raise ValidationError("No courses founded for this user")
+        status = request.query_params.get('status')
+        if status == 'passenger': # get the course as a passenger
+            try: return Course.objects.filter(passenger__user=request.user)
+            except Course.DoesNotExist: raise ValidationError("No courses as a passenger founded for this user")
+        else : # get courses as a driver
+            try: return Course.objects.filter(user=request.user)
+            except Course.DoesNotExist: raise ValidationError("No courses as a driver founded for this user")
+
+
 
     def get(self, request):
         course = self.get_obj(request)
