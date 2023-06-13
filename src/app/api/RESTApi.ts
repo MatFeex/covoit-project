@@ -72,10 +72,6 @@ export async function signinEPF(
     .then((resp) => {
       console.log(resp);
       return resp.data;
-    })
-    .catch((error) => {
-      console.log(JSON.stringify(error.response.data));
-      return null;
     });
 }
 

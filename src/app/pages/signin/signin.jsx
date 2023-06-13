@@ -1,6 +1,6 @@
 import "./signin.scss";
 import React, {useState} from "react";
-import {Link, Navigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {signinEPF} from "../../api/RESTApi";
 import {useAuth} from "../../hooks/useAuth";
 import useInfo from "../../hooks/useInfo";
@@ -15,10 +15,10 @@ function Signin() {
 	const [password1, setPassword1] = useState("");
 	const [password2, setPassword2] = useState("");
 
-	const [redirect, setRedirect] = useState(false);
 	const [errorInfo, setErrorInfo] = useState(null);
 	const [loading, setLoading] = useState(false);
 
+	const navigate = useNavigate();
 	const { login } = useAuth();
 
 	const correctInputs = () => {
@@ -54,7 +54,7 @@ function Signin() {
 									console.log(resp);
 									login(resp);
 									setLoading(false);
-									setRedirect(true);
+									navigate('/login')
 								})
 								.catch(() => {
 									setTextError('This email alredy exists, please login.');
@@ -64,7 +64,6 @@ function Signin() {
 						}
 					}}
 				>
-					{redirect && <Navigate to="/" />}
 					<div className="card-body">
 						<div className="form-label-group mb-3">
 							<label htmlFor="login">Nom :</label>
