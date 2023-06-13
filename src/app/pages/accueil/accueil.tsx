@@ -1,17 +1,17 @@
 import "./accueil.scss";
 
-import {addIcon, searchIcon, voiture} from "../../../assets/allAssets";
-import {Link} from "react-router-dom";
+import { addIcon, searchIcon, voiture } from "../../../assets/allAssets";
+import { Link } from "react-router-dom";
 import React from "react";
-import {useAuth} from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Accueil() {
   const { token } = useAuth();
 
   return (
     <div className="Accueil">
-      <div className="container-fluid light-bg">
-        <div className="container p-4">
+      <div className="container-fluid light-bg m-0">
+        <div className="container col-xs-12 col-sm-12 col-md-11 col-lg-9 col-xl-7 py-4">
           <h3 className="pb-4 fw-semibold">
             Un vaste choix de trajets pour se rendre à l'EPF !
           </h3>
@@ -19,33 +19,32 @@ export default function Accueil() {
             <div className="w-50 text-center">
               <div>{voiture()}</div>
             </div>
-            <h5 className="text-end text-wrap">
+            <h5 className="text-end text-break">
               Solution responsable et écologique de covoiturage entre étudiants
               et enseignants
             </h5>
           </div>
           <div className="card shadow">
-            <div className="card-body">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et
-              tempus leo, non viverra lectus. Etiam sagittis maximus pulvinar.
-              Sed placerat, ligula non feugiat feugiat, ante nibh ultrices
-              libero, nec mattis elit velit eu lacus. Pellentesque luctus sed
-              justo eget accumsan. In lobortis pellentesque rutrum. Sed in ex
-              hendrerit, finibus metus in, viverra ligula. Aliquam pellentesque
-              felis quis diam tempus, in auctor odio finibus. Praesent nunc
-              lacus, pellentesque quis nibh vitae, volutpat placerat quam.
-              Aliquam non justo sed risus venenatis sodales eget fermentum
-              lacus. Quisque eros dolor, luctus a mollis quis, placerat a velit.
-              Aliquam eget odio molestie, eleifend sem ut, volutpat tortor.
-              Nulla facilisi. Quisque non ligula ac leo placerat cursus. Cras
-              quis pellentesque tortor. Sed egestas tempus molestie
+            <div className="card-body text-break">
+              Bienvenue sur EPF Co'Drive, le site de covoiturage pour les élèves
+              et professionnels de l'EPF ! C'est un moyen pratique et convivial
+              pour partager ses trajets. Notre plateforme connecte ses membres
+              pour leur permettre de partager leurs voyages avec des passagers
+              cherchant un moyen de transport écologique. Que vous ayez besoin
+              de vous rendre à l'EPF, ou de rentrer chez vous en fin de journée,
+              notre site facilite la mise en relation des personnes partageant
+              le même itinéraire. Profitez de notre système de réservation
+              simple et sécurisé pour organiser vos déplacements, réduire vos
+              frais de transport et rencontrer de nouvelles personnes.
+              Rejoignez-nous dès maintenant et ensemble, créons une communauté
+              de covoiturage dynamique et responsable !
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container d-flex justify-content-between mt-4">
-        <div className="card flex-fill m-3 w-50 shadow">
+      <div className="container d-flex justify-content-between col-xs-12 col-sm-12 col-md-11 col-lg-9 col-xl-7 mt-4">
+        <div className="card flex-fill mt-3 me-3 w-50 shadow">
           <div className="card-header d-flex bg-primary">
             {addIcon()}
             <Link to="/add" className="nav-link">
@@ -54,14 +53,14 @@ export default function Accueil() {
               </h4>
             </Link>
           </div>
-          <div className="card-body text-start text-wrap">
-            Donec pharetra, turpis et varius fermentum, enim dolor molestie
-            lacus, hendrerit bibendum enim velit eu metus. Vestibulum enim nisl,
-            pharetra a enim blandit, tincidunt tincidunt tellus.
+          <div className="card-body text-start text-break">
+            Partagez votre trajet et proposez des places dans votre véhicule
+            pour que des membres de l'EPF vous rejoigne, économiser sur les
+            frais de transport et réduire votre empreinte carbone.
           </div>
         </div>
 
-        <div className="card flex-fill m-3 w-50 shadow">
+        <div className="card flex-fill mt-3 ms-3 w-50 shadow">
           <div className="card-header d-flex dark bg-primary">
             {searchIcon()}
             <Link to="/list" className="nav-link">
@@ -70,10 +69,10 @@ export default function Accueil() {
               </h4>
             </Link>
           </div>
-          <div className="card-body text-start text-wrap">
-            Nam facilisis urna non mi ullamcorper tincidunt. Curabitur non
-            tristique nunc. Nullam ultrices neque enim. Nulla dignissim leo ex,
-            at hendrerit dolor euismod sed.
+          <div className="card-body text-start text-break">
+            Trouvez rapidement des trajets disponibles qui correspondent à vos
+            besoins et économisez sur vos déplacements en rejoignant des
+            conducteurs partageant le même itinéraire.
           </div>
         </div>
       </div>

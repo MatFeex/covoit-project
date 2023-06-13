@@ -24,10 +24,10 @@ export async function getToken(
   password: string | undefined
 ): Promise<Token> {
   return axios
-    .post(
-      `${environment.api.host}/api/user/login/`,
-      { email: user, password: password },
-    )
+    .post(`${environment.api.host}/api/user/login/`, {
+      email: user,
+      password: password,
+    })
     .then((resp) => {
       return resp.data;
     })
@@ -107,7 +107,7 @@ export async function getUserCourses(status: string, token: string) {
   return axios
     .get(`${environment.api.host}/api/courses-user/`, {
       params: {
-        status: status
+        status: status,
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -351,16 +351,34 @@ export async function becomePassenger(id: string, token: String) {
 
 export async function deleteCourse(id: string, token: string) {
   return axios
-    .delete(
-      `${environment.api.host}/api/courses/${id}/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    .delete(`${environment.api.host}/api/courses/${id}/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     .then((resp) => {
       console.log(resp);
       return resp;
     });
+}
+
+export function noteSomeone(
+  note: number,
+  comm: string,
+  token: string,
+  courseId: string,
+  ratedId: string
+) {
+  return axios.post(
+    `${environment.api.host}/api/notes/courses/${courseId}/user-rated/${ratedId}/`,
+    {
+      note: note,
+      comment: comm,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 }

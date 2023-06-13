@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="19.466343mm"
+   height="18.576157mm"
+   viewBox="0 0 19.466343 18.576157"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="star_empty.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     fit-margin-top="0.5"
+     fit-margin-left="0.5"
+     fit-margin-right="0.5"
+     fit-margin-bottom="0.5"
+     inkscape:zoom="2.096401"
+     inkscape:cx="-19.318823"
+     inkscape:cy="46.508278"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1401" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-29.066922,-36.750403)">
+    <g
+       id="g1401"
+       inkscape:transform-center-x="-7.4699795"
+       inkscape:transform-center-y="-12.724175">
+      <path
+         id="path1143"
+         style="fill:none;stroke:#000000;stroke-width:0.999999;stroke-linecap:round;stroke-linejoin:round"
+         d="m 39.205434,37.525596 c -0.184895,-0.366924 -0.625785,-0.366924 -0.810681,0 l -2.632083,5.22336 -5.788703,0.885313 c -0.406637,0.06219 -0.54288,0.480858 -0.250514,0.76982 l 4.161986,4.113525 -0.945531,5.770512 c -0.06642,0.40536 0.290267,0.664112 0.655854,0.475775 l 5.204332,-2.681061 5.204332,2.681061 c 0.365587,0.188336 0.722275,-0.07042 0.655855,-0.475775 l -0.945533,-5.770513 4.161987,-4.113525 c 0.292366,-0.288962 0.156123,-0.70763 -0.250515,-0.76982 l -5.788703,-0.885312 z"
+         sodipodi:nodetypes="sscsscsccsscsscs"
+         inkscape:transform-center-x="-3.0374236"
+         inkscape:transform-center-y="-2.7492768" />
+    </g>
+  </g>
+</svg>
