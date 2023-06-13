@@ -7,8 +7,8 @@ import { getReadableDate, getReadableTime } from "../../utils/utils";
 import { flecheTrajet } from "../../../assets/allAssets";
 import { canAcces } from "../../context/AuthContext";
 import { useAuth } from "../../hooks/useAuth";
-import { Button } from "@mui/material";
 import useInfo from "../../hooks/useInfo";
+import {customIcons, IconContainer, StyledRating} from "../../component/IconContainer";
 
 function ListMesTrajets() {
   if (!canAcces()) return <Navigate to={"/login"} />;
@@ -21,6 +21,7 @@ function ListMesTrajets() {
   const [coursesAsDriver, setCoursesAsDriver] = useState([]);
   const [coursesAsPassenger, setCoursesAsPassenger] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [noteAvis, setNoteAvis] = useState(3);
 
   useEffect(() => {
     getUserCourses("driver", token.token).then((resp) => {
@@ -32,29 +33,18 @@ function ListMesTrajets() {
   }, []);
 
   const saveNoteToDriver = (courseId, userId) => {
-    const note = parseInt(document.getElementById("note-avis").value);
+    const note = noteAvis;
     const comm = document.getElementById("comm-avis").value;
-
-    if (isNaN(note)) {
-      setTextError("La note entrée est invalide");
-      setOpenError(true);
-      setLoading(false);
-      return;
-    }
-
-    if (note > 5 || note < 0) {
-      setTextError("La note entrée n'est pas entre 0 et 5");
-      setOpenError(true);
-      setLoading(false);
-      return;
-    }
 
     noteSomeone(note, comm, token.token, courseId, userId).then((resp) => {
       console.log(resp);
 	  setTextSuccess("Avis ajouté !");
 	  setOpenSuccess(true);
-    });
-    setLoading(false);
+      setLoading(false);
+    }).catch(() => {
+      setTextError("La note entrée n'est pas entre 0 et 5");
+      setOpenError(true);
+    }).finally(() => setLoading(false));
   };
 
   return (
@@ -163,25 +153,13 @@ function ListMesTrajets() {
                                 <div className="modal-body">
                                   <h4>Noter le conducteur de la course :</h4>
                                   <div className="form-group mb-3">
-                                    <label htmlFor="password">Note :</label>
-                                    <input
-                                      id="note-avis"
-                                      class="form-control"
-                                      type="text"
-                                      required
-                                    />
-                                    <small class="form-text text-muted">
-                                      Veuillez entrer une note entre 0 et 10
-                                    </small>
-
                                     <StyledRating
-                                      name="highlight-selected-only"
-                                      defaultValue={2}
-                                      IconContainerComponent={IconContainer}
-                                      getLabelText={(value) =>
-                                        customIcons[value].label
-                                      }
-                                      highlightSelectedOnly
+                                        name="highlight-selected-only"
+                                        value={noteAvis}
+                                        IconContainerComponent={IconContainer}
+                                        getLabelText={(value) => customIcons[value].label}
+                                        highlightSelectedOnly
+                                        onChange={(e, v) => setNoteAvis(v)}
                                     />
                                   </div>
                                   <div className="form-group mb-3">

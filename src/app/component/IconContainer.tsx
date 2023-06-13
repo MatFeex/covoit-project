@@ -7,13 +7,13 @@ import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
-const StyledRating = styled(Rating)(({ theme }) => ({
+export const StyledRating = styled(Rating)(({ theme }) => ({
     '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
         color: theme.palette.action.disabled,
     },
 }));
 
-const customIcons: {
+export const customIcons: {
     [index: string]: {
         icon: React.ReactElement;
         label: string;
@@ -41,19 +41,7 @@ const customIcons: {
     },
 };
 
-function IconContainer(props: IconContainerProps) {
+export function IconContainer(props: IconContainerProps) {
     const { value, ...other } = props;
     return <span {...other}>{customIcons[value].icon}</span>;
-}
-
-export default function RadioGroupRating() {
-    return (
-        <StyledRating
-            name="highlight-selected-only"
-            defaultValue={2}
-            IconContainerComponent={IconContainer}
-            getLabelText={(value: number) => customIcons[value].label}
-            highlightSelectedOnly
-        />
-    );
 }
