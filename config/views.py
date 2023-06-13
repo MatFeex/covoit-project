@@ -132,7 +132,7 @@ class UserFromIdAPI(APIView):
 
     def get(self, request, id):
         try: user = User.objects.get(id=id)
-        except User.DoesNotExist: return Response(data={'error':f'No user assigned to id {id}'},status=HTTP_404_NOT_FOUND)
+        except User.DoesNotExist: return Response(data=[f'No user assigned to id {id}'],status=HTTP_404_NOT_FOUND)
         return Response(data={"user": UserSerializer(user, many=False).data}, status=HTTP_200_OK)
  
 
@@ -219,7 +219,7 @@ class CourseAPI(APIView):
     def delete(self, request, id):
         course = self.get_obj(request, id)
         course.delete()
-        return Response(data={"detail": f"The course {id} has been deleted"}, status=HTTP_200_OK)
+        return Response(data=[f"The course {id} has been deleted"], status=HTTP_200_OK)
 
     
 
@@ -275,7 +275,7 @@ class PassengerAPI(APIView):
     def delete(self, request, id):
         passenger = self.get_obj(request, id)
         passenger.delete()
-        return Response(data={"detail": f"The passenger {id} has been deleted"}, status=HTTP_200_OK)
+        return Response(data=[f"The passenger {id} has been deleted"], status=HTTP_200_OK)
 
 
 # NOTES
@@ -305,19 +305,19 @@ class NotesSomeoneAPI(APIView):
         rater = request.user
 
         # Check if the rater is not the rated
-        if rater.id == rated_id :  return Response("Rating denied : You cannot rate yourself.", status=HTTP_400_BAD_REQUEST)
+        if rater.id == rated_id :  return Response(data=["Rating denied : You cannot rate yourself."], status=HTTP_400_BAD_REQUEST)
 
         course = Course.objects.get(id=course_id)
 
         if course.user_id == rater.id : # the rater is the driver
             
             if not rated_id in rater.passenger_set.filter(course_id=course_id).values_list('user_id', flat=True): # 
-                return Response("Rating denied : the rated person did not attend to your course.", status=HTTP_400_BAD_REQUEST)
+                return Response(data=["Rating denied : the rated person did not attend to your course."], status=HTTP_400_BAD_REQUEST)
         
         elif rater.id in course.passenger_set.filter(course_id=course_id).values_list('user_id', flat=True) : # the rater is a passenger
             if not rated_id == course.user_id :
-                return Response("Rating denied : As a passenger, you can only rate your driver.", status=HTTP_400_BAD_REQUEST)
-        else : return Response("Rating denied : You cannot rate a course in which you did not attend.", status=HTTP_400_BAD_REQUEST)
+                return Response(data=["Rating denied : As a passenger, you can only rate your driver."], status=HTTP_400_BAD_REQUEST)
+        else : return Response(data=["Rating denied : You cannot rate a course in which you did not attend."], status=HTTP_400_BAD_REQUEST)
 
 
         # Set the course and rated user IDs in the serializer data
@@ -352,7 +352,7 @@ class NoteAPI(APIView):
     def delete(self, request, id):
         note = self.get_obj(request, id)
         note.delete()
-        return Response(data={"detail": f"The note {id} has been deleted"}, status=HTTP_200_OK)
+        return Response(data=[f"The note {id} has been deleted"], status=HTTP_200_OK)
 
 
 class NoteFromUserIdAPI(APIView):
