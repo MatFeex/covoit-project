@@ -177,8 +177,6 @@ class CoursesUserAPI(APIView):
             try: return Course.objects.filter(user=request.user)
             except Course.DoesNotExist: raise ValidationError("No courses as a driver founded for this user")
 
-
-
     def get(self, request):
         course = self.get_obj(request)
         serializer = CourseSerializer(course, many=True)

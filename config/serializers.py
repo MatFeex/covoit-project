@@ -1,5 +1,4 @@
 from rest_framework.serializers import ModelSerializer
-from rest_framework import serializers
 from .models import User, Course, Passenger, Note
 from rest_framework.serializers import SerializerMethodField, CharField, ValidationError
 
