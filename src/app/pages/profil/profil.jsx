@@ -72,7 +72,7 @@ export default function Profil() {
                               return moy + note.note;
                             }, 0) / notesGot.length
                           ).toFixed(1)}{" "}
-                          / 10 - {notesGot.length} avis
+                          / 5 - {notesGot.length} avis
                         </button>
                       </h2>
                       <div
@@ -90,7 +90,7 @@ export default function Profil() {
                                       {note.rater.first_name}{" "}
                                       {note.rater.last_name}
                                     </Link>{" "}
-                                    - {note.note}/10
+                                    - {note.note}/5
                                   </div>
                                   <div className="">
                                     {note.comment ? (
