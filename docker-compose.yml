@@ -1,0 +1,16 @@
+version: "1"
+
+services:
+    backend:
+        build: ./covoit-project
+        container_name: backend
+        ports:
+            - "8000:8000"
+        depends_on:
+            - database
+
+    database:
+        build: ./db
+        container_name: covoitdb
+        ports:
+            - '5432:5432'
